@@ -15,7 +15,7 @@
 		<div class="link-back">
 			<div>	&#x21b0; назад	</div>
 			<div>
-				<p>версия 0.0.0.0<!--<sup> <a title="история версий" href="/noughtsandcrosses/changelog.php">(?)</a></sup>--></p>
+				<p>версия 0.0.1.3<!--<sup> <a title="история версий" href="/noughtsandcrosses/changelog.php">(?)</a></sup>--></p>
 			</div>
 		</div>
 
@@ -242,9 +242,16 @@
 			game_log( 'error: status: '+http_server_ai.xhr.status + ', body: ' + http_server_ai.xhr.statusText );
 			alert( 'error: status: '+http_server_ai.xhr.status + ', body: ' + http_server_ai.xhr.statusText );
 		} else {
-			if( http_server_ai.xhr.responseText.length>0 )
+			if( http_server_ai.xhr.responseText.length>0 ) {
+				var r = JSON.parse(http_server_ai.xhr.responseText);
+				if( r["comment"]!=undefined )
+					console.log(r.comment);
+				//html_comment = r.comment;
+				//aaa=html_comment.replace( new RegExp("<br\s*\/?>"), "\n" );
+				$('#comment_zone').val(r.comment.replace(/<br\s*\/?>/gi,"\n"));
 				game.move(JSON.parse(http_server_ai.xhr.responseText));
-			//alert( 'response: '+http_server_ai.xhr.responseText );
+				//alert( 'response: '+http_server_ai.xhr.responseText );
+			};
 		};
  		window['data_http_server_move'] = false;
  	}
@@ -335,7 +342,11 @@
 
 
 <!-- BODY -->
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		Computer analysis:
+
+		<textarea id="comment_zone" rows="11" style="display: block; width: 100%;"> </textarea>
+		<script>$('#comment_zone').val("")</script>
+
 		<div id="field" class="show-first-move"></div>
 
 		<div id="game_log" style="background: #ddd; margin: 10px 0 0; padding: 10px; "></div>

@@ -6,7 +6,7 @@
 
 
 struct est_pair {
-    est_pair() : s0(0), s1(1) {};
+    est_pair() : s0(0), s1(0) {};
     Lines_val player;
     double s0;
     double s1;

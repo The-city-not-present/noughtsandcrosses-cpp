@@ -16,6 +16,7 @@ using namespace std;
 
 void test_field();
 void test_ai( AI& );
+string ai_comment( AI& );
 
 class Finally_output {
 public:
@@ -51,11 +52,11 @@ int main( int argc, char** argv )
             AI ai(moves);
             // debug
             #ifdef DEBUG
-            #include "debug_code.hpp"
+            //#include "debug_code.hpp"
             #endif
             XY xy = ai.find_move();
             stringstream s;
-            s << "{\"x\":" << xy.x << ",\"y\":" << xy.y << "}";
+            s << "{\"x\":" << xy.x << ",\"y\":" << xy.y << ", \"comment\":\""+ai_comment(ai)+"\"}";
             output << s.str();
 
         } catch ( exception &e ) {
@@ -66,6 +67,21 @@ int main( int argc, char** argv )
     };
     return 0;
 }
+
+string ai_comment( AI& ai ) {
+    stringstream s;
+    s << "estimate: [ "<<ai.start_position->estimate[0]<<", "<<ai.start_position->estimate[1]<<" ]; <br />";
+    s << "top moves are: ";
+    for( int i=0; i<10; ++i )
+        s << "<br />  { "<<
+            i<<": ( "<<
+            ai.start_position->moves[i]->move.x<<", "<<
+            ai.start_position->moves[i]->move.y<<" )e=[ "<<
+            ai.start_position->moves[i]->get_estimate()[0]<<", "<<
+            ai.start_position->moves[i]->get_estimate()[1]<<" ], prob= "<<
+            ai.start_position->moves[i]->probability<<" },  ";
+    return s.str();
+};
 
 void test_field() {
     const int bounds_limit = 4;
