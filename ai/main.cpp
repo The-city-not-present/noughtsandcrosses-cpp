@@ -33,8 +33,7 @@ public:
 
 int main( int argc, char** argv )
 {
-    AI *temp_ai;
-    {
+     {
        Finally_output output;
        try {
             string movelist_str( "" );//[{\"x\":3,\"y\":5},{\"x\":3,\"y\":6},{\"x\":-1,\"y\":6},{\"x\":-1,\"y\":2},{\"x\":-1,\"y\":1},{\"x\":1,\"y\":7}]" );
@@ -51,7 +50,9 @@ int main( int argc, char** argv )
             // ветка А
             AI ai(moves);
             // debug
-            temp_ai = &ai;
+            #ifdef DEBUG
+            #include "debug_code.hpp"
+            #endif
             XY xy = ai.find_move();
             stringstream s;
             s << "{\"x\":" << xy.x << ",\"y\":" << xy.y << "}";
@@ -64,27 +65,6 @@ int main( int argc, char** argv )
         };
     };
     return 0;
-    #ifdef NDEBUG
-    return 0;
-    #endif
-
-    try {
-        test_ai( *temp_ai );
-
-
-        cout << endl;
-        // для тестирования
-        for( auto ii = temp_ai->field->begin_dir_rows(); ii!=temp_ai->field->end_dir_rows(); ++ii ) {
-            for( auto j=ii.begin(); j!=ii.end(); ++j )
-                cout << (char)*j << " ";
-            cout << endl << endl;
-        };
-        //test_field();
-    } catch ( exception &e ) {
-        cerr << "exception:  " << e.what() << endl;
-        return 0xff;
-    };
-    cout << "Have a nice day!" << endl;
 }
 
 void test_field() {
