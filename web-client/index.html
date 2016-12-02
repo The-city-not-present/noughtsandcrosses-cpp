@@ -240,14 +240,13 @@
  	function http_server_ai_move() {
 		if( http_server_ai.xhr.status != 200 ) {
 			game_log( 'error: status: '+http_server_ai.xhr.status + ', body: ' + http_server_ai.xhr.statusText );
+			$('#comment_zone').val(http_server_ai.xhr.statusText);
 			alert( 'error: status: '+http_server_ai.xhr.status + ', body: ' + http_server_ai.xhr.statusText );
 		} else {
 			if( http_server_ai.xhr.responseText.length>0 ) {
 				var r = JSON.parse(http_server_ai.xhr.responseText);
 				if( r["comment"]!=undefined )
 					console.log(r.comment);
-				//html_comment = r.comment;
-				//aaa=html_comment.replace( new RegExp("<br\s*\/?>"), "\n" );
 				$('#comment_zone').val(r.comment.replace(/<br\s*\/?>/gi,"\n"));
 				game.move(JSON.parse(http_server_ai.xhr.responseText));
 				//alert( 'response: '+http_server_ai.xhr.responseText );

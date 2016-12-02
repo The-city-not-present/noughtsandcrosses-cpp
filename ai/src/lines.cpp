@@ -63,21 +63,21 @@ UV lines_translate_xy_to_uv( lines_direction d, XY xy, XY refmove ) {
 
 
 
-// ==Lines_val class
+// ==Field_cell_type class
 
-Lines_val::Lines_val() : val(0) {};
-Lines_val::Lines_val( int _val ) : val(_val) {};
-Lines_val::Lines_val( Val _val ) : val(_val) {};
-//Lines_val::Lines_val( Lines_val& _val ) : val(_val.val) {};
-Lines_val::operator int() const { return val; };
-Lines_val::operator char () const { if((val&1)==0)return '_';return ((val&2)==0?'x':'o'); };
-Lines_val::operator string() const { if((val&1)==0)return "undefined";return ((val&2)==0?"cross":"nought"); };
-Lines_val::operator Val() const { return static_cast<Val>(val&3);/* младшие 2 бита*/ };
-Lines_val::operator bool() const{ return (val&1)==1; };
-bool Lines_val::operator == (Lines_val& v) const { return v.val==val; };
-char Lines_val::get_bit( char i )const{return val & (1<<i); };
-bool Lines_val::is_defined()const {    return (val&1)==1; }
-bool Lines_val::is_undefined()const {  return (val&1)==0; }
+Field_cell_type::Field_cell_type() : val(0) {};
+Field_cell_type::Field_cell_type( int _val ) : val(_val) {};
+Field_cell_type::Field_cell_type( Val _val ) : val(_val) {};
+//Field_cell_type::Field_cell_type( Field_cell_type& _val ) : val(_val.val) {};
+Field_cell_type::operator int() const { return val; };
+Field_cell_type::operator char () const { if((val&1)==0)return '_';return ((val&2)==0?'x':'o'); };
+Field_cell_type::operator string() const { if((val&1)==0)return "undefined";return ((val&2)==0?"cross":"nought"); };
+Field_cell_type::operator Val() const { return static_cast<Val>(val&3);/* младшие 2 бита*/ };
+Field_cell_type::operator bool() const{ return (val&1)==1; };
+bool Field_cell_type::operator == (Field_cell_type& v) const { return v.val==val; };
+char Field_cell_type::get_bit( char i )const{return val & (1<<i); };
+bool Field_cell_type::is_defined()const {    return (val&1)==1; }
+bool Field_cell_type::is_undefined()const {  return (val&1)==0; }
 
 
 
@@ -102,7 +102,7 @@ Lines::Lines( move_list& arg ) : refmove({20,15})
         ctx.y_min -= 4;
         ctx.y_max += 4;*/
     };
-    field = unique_ptr<Field<Lines_val>>( new Field<Lines_val>(ctx) );
+    field = unique_ptr<Field<Field_cell_type>>( new Field<Field_cell_type>(ctx) );
     int t = 0;
     for( const auto& i : arg )
         (*field)[XY({i.x-refmove.x,i.y-refmove.y})] = ((t++)&1) * 2 + 1;
@@ -116,7 +116,7 @@ Lines::Lines( move_list& arg ) : refmove({20,15})
 Lines::Lines( Lines& arg ) {
 };*/
 
-Lines_val Lines::checkwin() {
+Field_cell_type Lines::checkwin() {
      lines_direction dirs[4] { dir_rows, dir_columns, dir_diagonal_main, dir_diagonal_minor };
      for( auto i_dir : dirs )
         for( auto ii = field->line_iterator_begin_by_dir(i_dir); ii->is_not_equal(*field->line_iterator_end_by_dir(i_dir)); ii->next() ) {
@@ -125,10 +125,10 @@ Lines_val Lines::checkwin() {
                 if( (*j).is_undefined() ) { t_0 = t_1 = 0; continue; };
                 if( (Val)(*j)==cross ) { t_0++; t_1=0; };
                 if( (Val)(*j)==nought ) { t_1++; t_0=0; };
-                if( t_0>=5 ) return Lines_val{cross};
-                if( t_1>=5 ) return Lines_val{nought};
+                if( t_0>=5 ) return Field_cell_type{cross};
+                if( t_1>=5 ) return Field_cell_type{nought};
             };
         };
-    return Lines_val{}; // equal to false - all bits are 0 and we treat this as undefined aka false; Thehe is a cast operator
+    return Field_cell_type{}; // equal to false - all bits are 0 and we treat this as undefined aka false; Thehe is a cast operator
 };
 

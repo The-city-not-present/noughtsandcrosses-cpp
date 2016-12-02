@@ -13,9 +13,9 @@ struct double_pair {
     double& operator [] ( char index ) { return ( index==0 ? s0 : s1 ); };
 };
 
-struct est_field_pair {
-    est_field_pair() : s0(0), s1(0) {};
-    Lines_val player;
+struct Estimate_field_cell_type {
+    Estimate_field_cell_type() : s0(0), s1(0) {};
+    Field_cell_type player;
     double s0;
     double s1;
     operator double_pair() { return double_pair{s0,s1}; };
@@ -29,12 +29,14 @@ struct est_field_pair {
 template<typename type>
 static Field_constraints field_constraints_expand( Field_constraints, Field<type>* pointer, bool(*func)(Field_iterator_dir<type>) );
 
-class AI_estimates_field : public Field<est_field_pair>
+class AI_estimates_field : public Field<Estimate_field_cell_type>
 {
     public:
         AI_estimates_field() = delete; // нельзя создавать без параметров
-        explicit AI_estimates_field( Field<Lines_val>* );
-        explicit AI_estimates_field( Field<Lines_val>*, XY );
+        explicit AI_estimates_field( Field<Field_cell_type>* );
+        explicit AI_estimates_field( Field<Field_cell_type>*, XY );
+        explicit AI_estimates_field( Field<Estimate_field_cell_type>* );
+        explicit AI_estimates_field( Field<Estimate_field_cell_type>*, XY );
         AI_estimates_field& operator = ( AI_estimates_field ) = delete;
         AI_estimates_field& operator = ( AI_estimates_field& ) = delete;
         void calculate();
@@ -42,6 +44,9 @@ class AI_estimates_field : public Field<est_field_pair>
     protected:
 
     private:
+        void find_min_bounds( Field_constraints&, Field<Field_cell_type>* );
+        void find_min_bounds( Field_constraints&, Field<Estimate_field_cell_type>* );
+        void expand_bounds();
 };
 
 template<typename type>

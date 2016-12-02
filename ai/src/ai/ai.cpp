@@ -8,3 +8,10 @@ XY AI::find_move() {
     return XY{ field->ctx.x_min-1+refmove.x, field->ctx.y_min-1+refmove.y };
 };
 
+void AI::evaluate() {
+    collect_move_candidates();
+};
+
+void AI::collect_move_candidates() {
+    for( auto& i : AI_position_recursive.position_directory )
+};

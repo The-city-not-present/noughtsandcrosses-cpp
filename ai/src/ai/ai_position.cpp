@@ -8,21 +8,35 @@
 
 // == 2. AI_position_recursive ==
 
-AI_position_recursive::AI_position_recursive( Field<Lines_val> *o ) : estimates_field(o) {
+AI_position_recursive::AI_position_recursive( Field<Field_cell_type> *o ) : estimates_field(o) {
     this->moves_count = estimates_field.moves_count;
     estimates_field.calculate();
-    collect_moves();
-    calculate_estimate();
+    collect_moves_and_calculate_estimates();
+    position_directory << this;
 }
 
-AI_position_recursive::AI_position_recursive( Field<Lines_val> *o, XY p ) : estimates_field(o,p) {
+AI_position_recursive::AI_position_recursive( Field<Field_cell_type> *o, XY p ) : estimates_field(o,p) {
     this->moves_count = estimates_field.moves_count;
     estimates_field.calculate();
-    collect_moves();
-    calculate_estimate();
+    collect_moves_and_calculate_estimates();
+    position_directory << this;
 }
 
-void AI_position_recursive::collect_moves() {
+AI_position_recursive::AI_position_recursive( Field<Estimate_field_cell_type> *o ) : estimates_field(o) {
+    this->moves_count = estimates_field.moves_count;
+    estimates_field.calculate();
+    collect_moves_and_calculate_estimates();
+    position_directory << this;
+}
+
+AI_position_recursive::AI_position_recursive( Field<Estimate_field_cell_type> *o, XY p ) : estimates_field(o,p) {
+    this->moves_count = estimates_field.moves_count;
+    estimates_field.calculate();
+    collect_moves_and_calculate_estimates();
+    position_directory << this;
+}
+
+void AI_position_recursive::collect_moves_and_calculate_estimates() {
     vector<AI_move*> win_moves;
     XY point;
     char me = estimates_field.moves_count&1;
@@ -80,15 +94,15 @@ void AI_position_recursive::collect_moves() {
     );
 };
 
-void AI_position_recursive::calculate_estimate() {
-    // already done
-};
+
+
 
 // == 3. AI_position_static ==
 
 AI_position_static::AI_position_static( int count, double_pair e ) {
     this->moves_count  = count;
     this->estimate = e;
+    position_directory << this;
 };
 
 

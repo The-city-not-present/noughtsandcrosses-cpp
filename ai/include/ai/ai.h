@@ -12,11 +12,13 @@ class AI : public Lines
         AI( Lines ) = delete;
         AI( Lines& ) = delete;
         AI( move_list& m ) : Lines(m) {};
-        //virtual ~AI();
         XY find_move();
         shared_ptr<AI_position_recursive> start_position;
 
+        void evaluate();
+
     protected:
+        void collect_move_candidates();
 
     private:
 };

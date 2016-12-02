@@ -52,26 +52,26 @@ UV lines_translate_xy_to_uv( lines_direction, XY, XY );
 
 
 
-// == Lines_val class ==
+// == Field_cell_type class ==
 
 // TODO: компилятор где-то дает предупреждения об инлайнах; может, здесь? Лучше переписать?
 
 // класс-тип, которого будут элементы в таблицах; позволяет читать отдельные биты
 
-class Lines_val {
+class Field_cell_type {
 public:
     //uint32_t val; // чтоб 4 байта и беззнаковый
     char val; // байта хватит
-    Lines_val();
-    Lines_val( int );
-    Lines_val( Val );
-    //Lines_val( Lines_val& );
+    Field_cell_type();
+    Field_cell_type( int );
+    Field_cell_type( Val );
+    //Field_cell_type( Field_cell_type& );
     operator int() const;
     operator char() const;
     operator string() const;
     operator bool() const;// то же, что is_defined()
     operator Val() const;
-    bool operator == ( Lines_val& ) const;
+    bool operator == ( Field_cell_type& ) const;
     char get_bit( char i ) const;
     bool is_defined() const;
     bool is_undefined() const;
@@ -305,7 +305,7 @@ protected:
 
 class Lines {
     public:
-        unique_ptr<Field<Lines_val>> field;
+        unique_ptr<Field<Field_cell_type>> field;
         XY refmove;
 
         Lines( Lines& ) = delete;
@@ -314,7 +314,7 @@ class Lines {
         virtual ~Lines() {};
         Lines operator = ( Lines& ) = delete;
 
-        Lines_val checkwin();
+        Field_cell_type checkwin();
 };
 
 

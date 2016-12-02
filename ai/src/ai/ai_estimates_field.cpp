@@ -27,53 +27,13 @@ inline double calc_est( char n, bool player_is_me ) {
 
 
 
-AI_estimates_field::AI_estimates_field( Field<Lines_val>* p ) {
+AI_estimates_field::AI_estimates_field( Field<Field_cell_type>* p ) {
     moves_count = p->moves_count;
     // now we find the really used area, adjust constraints to it and expand them by 4 squares
     // this calculations help us keep field area wider then real field size, and avoid expansion of space
-    {
-        XY t;
-        for( t.x = p->ctx.x_min; t.x<0; t.x++ ) {
-            bool found = false;
-            for( t.y = p->ctx.y_min; t.y<=p->ctx.y_max; ++t.y )
-                found = found || (bool)(*p)[t];
-            if( found ) {
-                ctx.x_min = t.x;
-                break;
-            };
-        };
-        for( t.x = p->ctx.x_max; t.x>=0; t.x-- ) {
-            bool found = false;
-            for( t.y = p->ctx.y_min; t.y<=p->ctx.y_max; ++t.y )
-                found = found || (bool)(*p)[t];
-            if( found ) {
-                ctx.x_max = t.x;
-                break;
-            };
-        };
-        for( t.y = p->ctx.y_min; t.y<0; t.y++ ) {
-            bool found = false;
-            for( t.x = p->ctx.x_min; t.x<=p->ctx.x_max; ++t.x )
-                found = found || (bool)(*p)[t];
-            if( found ) {
-                ctx.y_min = t.y;
-                break;
-            };
-        };
-        for( t.y = p->ctx.y_max; t.y>=0; t.y-- ) {
-            bool found = false;
-            for( t.x = p->ctx.x_min; t.x<=p->ctx.x_max; ++t.x )
-                found = found || (bool)(*p)[t];
-            if( found ) {
-                ctx.y_max = t.y;
-                break;
-            };
-        };
-        ctx.x_min -= 4;
-        ctx.x_max += 4;
-        ctx.y_min -= 4;
-        ctx.y_max += 4;
-    };
+
+    find_min_bounds( p->ctx, p );
+    expand_bounds();
 
     Create(); // "init" function (mem allocation), substitution of a constructor call
 
@@ -84,61 +44,58 @@ AI_estimates_field::AI_estimates_field( Field<Lines_val>* p ) {
                 (*this)[point].player = (*p)[point];
 };
 
-AI_estimates_field::AI_estimates_field( Field<Lines_val>* p, XY add ) {
+AI_estimates_field::AI_estimates_field( Field<Field_cell_type>* p, XY add ) {
     moves_count = p->moves_count+1;
-    {
-        XY t;
-        for( t.x = p->ctx.x_min; t.x<0; t.x++ ) {
-            bool found = false;
-            for( t.y = p->ctx.y_min; t.y<=p->ctx.y_max; ++t.y )
-                found = found || (bool)(*p)[t];
-            if( found ) {
-                ctx.x_min = t.x;
-                break;
-            };
-        };
-        for( t.x = p->ctx.x_max; t.x>=0; t.x-- ) {
-            bool found = false;
-            for( t.y = p->ctx.y_min; t.y<=p->ctx.y_max; ++t.y )
-                found = found || (bool)(*p)[t];
-            if( found ) {
-                ctx.x_max = t.x;
-                break;
-            };
-        };
-        for( t.y = p->ctx.y_min; t.y<0; t.y++ ) {
-            bool found = false;
-            for( t.x = p->ctx.x_min; t.x<=p->ctx.x_max; ++t.x )
-                found = found || (bool)(*p)[t];
-            if( found ) {
-                ctx.y_min = t.y;
-                break;
-            };
-        };
-        for( t.y = p->ctx.y_max; t.y>=0; t.y-- ) {
-            bool found = false;
-            for( t.x = p->ctx.x_min; t.x<=p->ctx.x_max; ++t.x )
-                found = found || (bool)(*p)[t];
-            if( found ) {
-                ctx.y_max = t.y;
-                break;
-            };
-        };
-        if( add.x<ctx.x_min )   ctx.x_min = add.x;
-        if( add.x>ctx.x_max )   ctx.x_max = add.x;
-        if( add.y<ctx.y_min )   ctx.y_min = add.y;
-        if( add.y>ctx.y_max )   ctx.y_max = add.y;
-        ctx.x_min -= 4;
-        ctx.x_max += 4;
-        ctx.y_min -= 4;
-        ctx.y_max += 4;
-    };
+
+    find_min_bounds( p->ctx, p );
+    if( add.x<ctx.x_min )   ctx.x_min = add.x;
+    if( add.x>ctx.x_max )   ctx.x_max = add.x;
+    if( add.y<ctx.y_min )   ctx.y_min = add.y;
+    if( add.y>ctx.y_max )   ctx.y_max = add.y;
+    expand_bounds();
+
     Create();
     XY point;
     for( point.y = p->ctx.y_min; point.y<p->ctx.y_max+1; ++point.y )
         for( point.x = p->ctx.x_min; point.x<p->ctx.x_max+1; ++point.x )
             if( (bool)(*p)[point] )
                 (*this)[point].player = (*p)[point];
+    (*this)[add].player = (moves_count-1)&1;
+};
+
+AI_estimates_field::AI_estimates_field( Field<Estimate_field_cell_type>* p ) {
+    moves_count = p->moves_count;
+    // now we find the really used area, adjust constraints to it and expand them by 4 squares
+    // this calculations help us keep field area wider then real field size, and avoid expansion of space
+
+    find_min_bounds( p->ctx, p );
+    expand_bounds();
+
+    Create(); // "init" function (mem allocation), substitution of a constructor call
+
+    XY point;
+    for( point.y = p->ctx.y_min; point.y<p->ctx.y_max+1; ++point.y )
+        for( point.x = p->ctx.x_min; point.x<p->ctx.x_max+1; ++point.x )
+            if( (bool)(*p)[point] )
+                (*this)[point].player = (*p)[point].player;
+};
+
+AI_estimates_field::AI_estimates_field( Field<Estimate_field_cell_type>* p, XY add ) {
+    moves_count = p->moves_count+1;
+
+    find_min_bounds( p->ctx, p );
+    if( add.x<ctx.x_min )   ctx.x_min = add.x;
+    if( add.x>ctx.x_max )   ctx.x_max = add.x;
+    if( add.y<ctx.y_min )   ctx.y_min = add.y;
+    if( add.y>ctx.y_max )   ctx.y_max = add.y;
+    expand_bounds();
+
+    Create();
+    XY point;
+    for( point.y = p->ctx.y_min; point.y<p->ctx.y_max+1; ++point.y )
+        for( point.x = p->ctx.x_min; point.x<p->ctx.x_max+1; ++point.x )
+            if( (bool)(*p)[point] )
+                (*this)[point].player = (*p)[point].player;
     (*this)[add].player = (moves_count-1)&1;
 };
 
@@ -175,4 +132,93 @@ void AI_estimates_field::calculate() {
             };
         };
 };
+
+void AI_estimates_field::expand_bounds() {
+    ctx.x_min -= 4;
+    ctx.x_max += 4;
+    ctx.y_min -= 4;
+    ctx.y_max += 4;
+};
+
+void AI_estimates_field::find_min_bounds( Field_constraints& ctx_ref, Field<Field_cell_type>* p ) {
+    XY t;
+    for( t.x = ctx_ref.x_min; t.x<0; t.x++ ) {
+        bool found = false;
+        for( t.y = ctx_ref.y_min; t.y<=ctx_ref.y_max; ++t.y )
+            found = found || (bool)(*p)[t];
+        if( found ) {
+            ctx.x_min = t.x;
+            break;
+        };
+    };
+    for( t.x = ctx_ref.x_max; t.x>=0; t.x-- ) {
+        bool found = false;
+        for( t.y = ctx_ref.y_min; t.y<=ctx_ref.y_max; ++t.y )
+            found = found || (bool)(*p)[t];
+        if( found ) {
+            ctx.x_max = t.x;
+            break;
+        };
+    };
+    for( t.y = ctx_ref.y_min; t.y<0; t.y++ ) {
+        bool found = false;
+        for( t.x = ctx_ref.x_min; t.x<=ctx_ref.x_max; ++t.x )
+            found = found || (bool)(*p)[t];
+        if( found ) {
+            ctx.y_min = t.y;
+            break;
+        };
+    };
+    for( t.y = ctx_ref.y_max; t.y>=0; t.y-- ) {
+        bool found = false;
+        for( t.x = ctx_ref.x_min; t.x<=ctx_ref.x_max; ++t.x )
+            found = found || (bool)(*p)[t];
+        if( found ) {
+            ctx.y_max = t.y;
+            break;
+        };
+    };
+};
+
+void AI_estimates_field::find_min_bounds( Field_constraints& ctx_ref, Field<Estimate_field_cell_type>* p ) {
+    XY t;
+    for( t.x = ctx_ref.x_min; t.x<0; t.x++ ) {
+        bool found = false;
+        for( t.y = ctx_ref.y_min; t.y<=ctx_ref.y_max; ++t.y )
+            found = found || (bool)(*p)[t];
+        if( found ) {
+            ctx.x_min = t.x;
+            break;
+        };
+    };
+    for( t.x = ctx_ref.x_max; t.x>=0; t.x-- ) {
+        bool found = false;
+        for( t.y = ctx_ref.y_min; t.y<=ctx_ref.y_max; ++t.y )
+            found = found || (bool)(*p)[t];
+        if( found ) {
+            ctx.x_max = t.x;
+            break;
+        };
+    };
+    for( t.y = ctx_ref.y_min; t.y<0; t.y++ ) {
+        bool found = false;
+        for( t.x = ctx_ref.x_min; t.x<=ctx_ref.x_max; ++t.x )
+            found = found || (bool)(*p)[t];
+        if( found ) {
+            ctx.y_min = t.y;
+            break;
+        };
+    };
+    for( t.y = ctx_ref.y_max; t.y>=0; t.y-- ) {
+        bool found = false;
+        for( t.x = ctx_ref.x_min; t.x<=ctx_ref.x_max; ++t.x )
+            found = found || (bool)(*p)[t];
+        if( found ) {
+            ctx.y_max = t.y;
+            break;
+        };
+    };
+};
+
+
 
