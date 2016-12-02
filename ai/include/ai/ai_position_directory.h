@@ -17,6 +17,9 @@ class AI_position_directory
         void purge( Field<Field_cell_type>* );
         void purge( Field<Estimate_field_cell_type>* );
 
+        vector<AI_position_prototype*>::iterator begin() { return data.begin(); };
+        vector<AI_position_prototype*>::iterator end()   { return data.end(); };
+
     protected:
         vector<AI_position_prototype*> data;
 

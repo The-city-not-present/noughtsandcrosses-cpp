@@ -36,17 +36,28 @@ AI_position_recursive::AI_position_recursive( Field<Estimate_field_cell_type> *o
     position_directory << this;
 }
 
+AI_position_recursive::~AI_position_recursive() {
+    for( auto& i : position_directory )
+        if( i==this )
+            i=nullptr;
+};
+
 void AI_position_recursive::collect_moves_and_calculate_estimates() {
     vector<AI_move*> win_moves;
     XY point;
     char me = estimates_field.moves_count&1;
-    double e_max = 0;
+    double e_max  { 0 };
+    double e_max2 { 0 };
     for( point.y = estimates_field.ctx.y_min; point.y<estimates_field.ctx.y_max+1; ++point.y )
         for( point.x = estimates_field.ctx.x_min; point.x<estimates_field.ctx.x_max+1; ++point.x )
             if( !(bool)estimates_field[point] ) {
-                if( estimates_field[point][1-me]>e_max )
+                if( estimates_field[point][1-me]>=e_max ) {
+                    e_max2 = e_max;
                     e_max = estimates_field[point][1-me];
-                 moves.push_back( unique_ptr<AI_move>(new AI_move{
+                } else
+                    if( estimates_field[point][1-me]>e_max2 )
+                        e_max2 = estimates_field[point][1-me];
+                moves.push_back( unique_ptr<AI_move>(new AI_move{
                     this,
                     point,
                     estimates_field[point]
@@ -55,7 +66,7 @@ void AI_position_recursive::collect_moves_and_calculate_estimates() {
                     win_moves.push_back( moves.back().get() );
             };
     for( auto& i : moves )
-        i->position->estimate[1-me] = e_max - i->position->estimate[1-me];
+        i->position->estimate[1-me] = 0.2 * (e_max - i->position->estimate[1-me] ) + 0.8 * e_max2;
     if( win_moves.size()>0 ) {
         for( auto &i : moves )
             i->probability = 0;
@@ -94,6 +105,12 @@ void AI_position_recursive::collect_moves_and_calculate_estimates() {
     );
 };
 
+void AI_position_recursive::update_probability_global( double val ) {
+    probability_global = 1-(1-probability_global)*(1-val);
+    for( auto& i : moves )
+        i->position->update_probability_global( val * i->probability );
+};
+
 
 
 
@@ -103,6 +120,16 @@ AI_position_static::AI_position_static( int count, double_pair e ) {
     this->moves_count  = count;
     this->estimate = e;
     position_directory << this;
+};
+
+AI_position_static::~AI_position_static() {
+    for( auto& i : position_directory )
+        if( i==this )
+            i=nullptr;
+};
+
+void AI_position_static::update_probability_global( double val ) {
+    probability_global = 1-(1-probability_global)*(1-val);
 };
 
 

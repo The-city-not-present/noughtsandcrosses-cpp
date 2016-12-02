@@ -19,6 +19,7 @@ class AI : public Lines
 
     protected:
         void collect_move_candidates();
+        void flush_position_probabilities();
 
     private:
 };

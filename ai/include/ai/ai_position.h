@@ -15,13 +15,13 @@ class AI_position_directory;
 
 class AI_position_prototype {
     public:
-        //AI_position_prototype() = delete;
+        virtual ~AI_position_prototype() {};
 
 /* 1. */int moves_count;
 /* 2. */double_pair estimate;
 
-        double_pair probability_global = {0,0};
-
+        double probability_global = {0};
+        virtual void update_probability_global( double ) = 0;
 };
 
 
@@ -38,8 +38,12 @@ class AI_position_recursive : public AI_position_prototype
         AI_position_recursive( Field<Estimate_field_cell_type>* );
         AI_position_recursive( Field<Estimate_field_cell_type>*, XY );
 
+        ~AI_position_recursive();
+
         AI_estimates_field estimates_field;
         vector<unique_ptr<AI_move>> moves;
+
+        void update_probability_global( double );
 
         static AI_position_directory position_directory;
     protected:
@@ -57,6 +61,10 @@ class AI_position_static : public AI_position_prototype {
     public:
         AI_position_static() = delete;
         AI_position_static( int, double_pair );
+
+        void update_probability_global( double );
+
+        ~AI_position_static();
 
         static AI_position_directory position_directory;
 };

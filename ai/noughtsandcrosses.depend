@@ -54,7 +54,7 @@
 	<vector>
 	"lines.h"
 
-1480353089 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/lines.h
+1480698455 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/lines.h
 	<vector>
 	<array>
 	<unordered_map>
@@ -65,20 +65,20 @@
 1480353112 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/lines_field.hpp
 	<cstring>
 
-1480693086 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai.cpp
+1480702597 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai.cpp
 	"ai/ai.h"
 
-1480693049 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/ai/ai.h
+1480702316 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/ai/ai.h
 	"lines.h"
 	"ai/ai_position.h"
 
-1480685068 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_estimates_field.cpp
+1480698528 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_estimates_field.cpp
 	"ai_estimates_field.h"
 
-1480697877 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/ai/ai_estimates_field.h
+1480711837 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/ai/ai_estimates_field.h
 	"lines.h"
 
-1480350522 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/lines.cpp
+1480698455 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/lines.cpp
 	"lines.h"
 	<vector>
 
@@ -99,7 +99,7 @@
 
 1480268164 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/ai_position.h
 
-1480696722 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/ai/ai_position.h
+1480713063 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/ai/ai_position.h
 	<vector>
 	"ai/ai_estimates_field.h"
 	"ai/ai_move.h"
@@ -113,16 +113,17 @@
 1480689619 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_move.cpp
 	"ai_move.h"
 
-1480696682 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_position.cpp
+1480713119 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_position.cpp
 	"ai/ai_position.h"
 	<algorithm>
 	<math.h>
 
 1480666299 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/debug_code.hpp
 
-1480696287 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/ai/ai_position_directory.h
+1480700369 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/ai/ai_position_directory.h
 	"ai/ai_position.h"
 
-1480696623 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_position_directory.cpp
+1480701379 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_position_directory.cpp
 	"ai_position_directory.h"
+	<algorithm>
 
