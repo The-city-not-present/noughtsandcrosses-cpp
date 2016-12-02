@@ -38,7 +38,7 @@ void AI_position_recursive::collect_moves() {
                     estimates_field[point]
                 }) );
                 if( estimates_field[point][me]>=0.99999999 )
-                    win_moves.push_back( (moves.end()--)->get() );
+                    win_moves.push_back( moves.back().get() );
             };
     for( auto& i : moves )
         i->position->estimate[1-me] = e_max - i->position->estimate[1-me];
@@ -46,10 +46,12 @@ void AI_position_recursive::collect_moves() {
         for( auto &i : moves )
             i->probability = 0;
         for( auto &i : win_moves )
-            i->probability = 1 / win_moves.size();
+            i->probability = 1.0 / win_moves.size();
+        estimate[1-me] = 0;
+        estimate[me]   = 1;
     } else {
         double p_sum = 0.0;
-        est_pair e_sum;
+        double_pair e_sum;
         for( auto &i : moves ) {
             if( i->get_estimate()[1-me]>=0.99999999 ) {
                 i->probability = 0;
@@ -84,7 +86,7 @@ void AI_position_recursive::calculate_estimate() {
 
 // == 3. AI_position_static ==
 
-AI_position_static::AI_position_static( int count, est_pair e ) {
+AI_position_static::AI_position_static( int count, double_pair e ) {
     this->moves_count  = count;
     this->estimate = e;
 };

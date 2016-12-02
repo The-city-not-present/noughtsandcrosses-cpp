@@ -13,13 +13,13 @@ class AI_position_static;
 class AI_move
 {
     public:
-        AI_move( AI_position_recursive*, XY, est_pair );
+        AI_move( AI_position_recursive*, XY, double_pair );
 
         XY move;
         AI_position_recursive* parent_position;
         shared_ptr<AI_position_prototype> position;
-        est_pair& get_estimate();
-        est_pair est_base;
+        double_pair& get_estimate();
+        double_pair est_base;
         double probability = {0};
 
     protected:

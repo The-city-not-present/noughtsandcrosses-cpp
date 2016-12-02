@@ -16,7 +16,7 @@ class AI_position_prototype {
         //AI_position_prototype() = delete;
 
 /* 1. */int moves_count;
-/* 2. */est_pair estimate;
+/* 2. */double_pair estimate;
 
 };
 
@@ -50,7 +50,7 @@ class AI_position_recursive : public AI_position_prototype
 class AI_position_static : public AI_position_prototype {
     public:
         AI_position_static() = delete;
-        AI_position_static( int, est_pair );
+        AI_position_static( int, double_pair );
 };
 
 #endif // AI_POSITION_H
