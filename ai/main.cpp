@@ -8,15 +8,17 @@
 #include "read_post.h"
 
 #include <sstream> // где-то для конверсии чисел в строки через stringstream
+#include <string>
 
 using namespace std;
+
+#include "comment.hpp"
 
 
 
 
 void test_field();
 void test_ai( AI& );
-string ai_comment( AI& );
 
 class Finally_output {
 public:
@@ -42,10 +44,10 @@ int main( int argc, char** argv )
                 movelist_str = argv[1];
             else
                 movelist_str = cgi_processing::read_post();
-             #ifdef DEBUG
+            #ifdef DEBUG
            if( movelist_str=="" )
                 movelist_str = "[{\"x\":10, \"y\":10}]";
-            movelist_str = "[{\"x\":28,\"y\":11},{\"x\":27,\"y\":10},{\"x\":28,\"y\":10},{\"x\":27,\"y\":11},{\"x\":27,\"y\":12},{\"x\":28,\"y\":12},{\"x\":29,\"y\":10},{\"x\":30,\"y\":9},{\"x\":26,\"y\":13},{\"x\":25,\"y\":14},{\"x\":28,\"y\":9},{\"x\":28,\"y\":7},{\"x\":27,\"y\":8},{\"x\":30,\"y\":11},{\"x\":26,\"y\":9},{\"x\":29,\"y\":8},{\"x\":31,\"y\":10},{\"x\":27,\"y\":6},{\"x\":26,\"y\":5},{\"x\":30,\"y\":10},{\"x\":30,\"y\":8},{\"x\":30,\"y\":12},{\"x\":30,\"y\":13},{\"x\":29,\"y\":13},{\"x\":26,\"y\":10},{\"x\":30,\"y\":14},{\"x\":31,\"y\":15},{\"x\":31,\"y\":11},{\"x\":32,\"y\":10},{\"x\":28,\"y\":14},{\"x\":27,\"y\":15},{\"x\":26,\"y\":14},{\"x\":27,\"y\":14},{\"x\":29,\"y\":11},{\"x\":31,\"y\":9}]";
+            movelist_str = "[{\"x\":28,\"y\":11},{\"x\":28,\"y\":10},{\"x\":29,\"y\":10},{\"x\":29,\"y\":11},{\"x\":28,\"y\":12},{\"x\":30,\"y\":12},{\"x\":31,\"y\":13},{\"x\":26,\"y\":8},{\"x\":27,\"y\":9},{\"x\":29,\"y\":13},{\"x\":31,\"y\":11},{\"x\":30,\"y\":13},{\"x\":30,\"y\":11},{\"x\":31,\"y\":12},{\"x\":30,\"y\":9},{\"x\":27,\"y\":12}]";
             #endif
             JSON_parse data(movelist_str);
             move_list& moves = data.data;
@@ -57,139 +59,17 @@ int main( int argc, char** argv )
             #endif
             XY xy = ai.find_move();
             stringstream s;
-            s << "{\"x\":" << xy.x << ",\"y\":" << xy.y << ", \"comment\":\""+ai_comment(ai)+"\"}";
+            s << "{\"x\":" << xy.x << ",\"y\":" << xy.y << ", \"comment\":\""+comment::ai_comment(ai)+"\"}";
             output << s.str();
 
         } catch ( exception &e ) {
             output << "{\"error\":\""+cgi_processing::url_encode(e.what())+"\"}";
-            cerr << "exception:  " << e.what() << endl;
-            return 0xff;
+            //cout << "exception:  " << e.what() << endl;
+            return 0;//0xff;
         };
     };
     return 0;
 }
-
-string ai_comment( AI& ai ) {
-    stringstream s;
-    s << "estimate: [ "<<ai.start_position->estimate[0]<<", "<<ai.start_position->estimate[1]<<" ]; <br />";
-    s << "top moves are: ";
-    for( int i=0; i<10; ++i )
-        s << "<br />  { "<<
-            i<<": ( "<<
-            ai.start_position->moves[i]->move.x<<", "<<
-            ai.start_position->moves[i]->move.y<<" )e=[ "<<
-            ai.start_position->moves[i]->get_estimate()[0]<<", "<<
-            ai.start_position->moves[i]->get_estimate()[1]<<" ], prob= "<<
-            ai.start_position->moves[i]->probability<<" },  ";
-    return s.str();
-};
-
-void test_field() {
-    const int bounds_limit = 4;
-    Field<int> f{ -bounds_limit, bounds_limit, -bounds_limit, bounds_limit };
-    f[{0,0}] = 10;
-    XY i{1,1};
-    int val = 10;
-    for( int bounds=1; bounds<=bounds_limit; ++bounds ) {
-        while( i.x<bounds ) {
-            f[i] = val;
-            ++i.x; ++val;
-        };
-        while( i.y>-bounds ){
-            f[i] = val;
-            --i.y; ++val;
-        };
-        while( i.x>-bounds ){
-            f[i] = val;
-            --i.x; ++val;
-        };
-        while( i.y<bounds ){
-            f[i] = val;
-            ++i.y; ++val;
-        };
-        while( i.x<bounds ){
-            f[i] = val;
-            ++i.x; ++val;
-        };
-    };
-    f[i] = val;
-
-
-    // test direction conversions
-    const lines_direction dir = dir_diagonal_main;
-    vector<string> msgs;
-    {
-        UV c { dir, 0, 0 };
-        while( f.ctx.in_range(lines_translate_uv_to_ij(c)) )
-            --c.v;
-        for( ++c.v; f.ctx.in_range(lines_translate_uv_to_ij(c)); ++c.v ) {
-            XY point = lines_translate_uv_to_ij(c);
-            f[point] = 90;
-            UV temp = lines_translate_ij_to_uv(dir, point);
-            if( (temp.u!=c.u) || (temp.v!=c.v ) ) {
-                std::stringstream s;
-                s<<"failed: ( "<<(int)dir<<", "<<c.u<<", "<<c.v<<" ) -> ( "<<point.x<<", "<<point.y<<" ) -> ( "<<(int)dir<<", "<<temp.u<<", "<<temp.v<<" )";
-                msgs.push_back(s.str());
-            };
-        };
-    };
-    {
-        UV c = { dir, 1, 0 };
-        while( f.ctx.in_range(lines_translate_uv_to_ij(c)) )
-            --c.v;
-        for( ++c.v; f.ctx.in_range(lines_translate_uv_to_ij(c)); ++c.v ){
-            XY point = lines_translate_uv_to_ij(c);
-            f[point] = 91;
-            UV temp = lines_translate_ij_to_uv(dir, point);
-            if( (temp.u!=c.u) || (temp.v!=c.v ) ) {
-                std::stringstream s;
-                s<<"failed: ( "<<(int)dir<<", "<<c.u<<", "<<c.v<<" ) -> ( "<<point.x<<", "<<point.y<<" ) -> ( "<<(int)dir<<", "<<temp.u<<", "<<temp.v<<" )";
-                msgs.push_back(s.str());
-            };
-        };
-    };
-    {
-        UV c { dir, 2, 0 };
-        while( f.ctx.in_range(lines_translate_uv_to_ij(c)) )
-            --c.v;
-        for( ++c.v; f.ctx.in_range(lines_translate_uv_to_ij(c)); ++c.v ) {
-            XY point = lines_translate_uv_to_ij(c);
-            f[point] = 92;
-            UV temp = lines_translate_ij_to_uv(dir, point);
-            if( (temp.u!=c.u) || (temp.v!=c.v ) ) {
-                std::stringstream s;
-                s<<"failed: ( "<<(int)dir<<", "<<c.u<<", "<<c.v<<" ) -> ( "<<point.x<<", "<<point.y<<" ) -> ( "<<(int)dir<<", "<<temp.u<<", "<<temp.v<<" )";
-                msgs.push_back(s.str());
-            };
-        };
-    };
-    cout << ((msgs.size()==0)?"everything is ok":"messages are:") << endl;
-    for( auto i : msgs )
-        cout << i << endl;
-    cout << endl << endl << endl;
-    for( auto ii = f.begin_dir_rows(); ii!=f.end_dir_rows(); ++ii ) {
-        for( auto j=ii.begin(); j!=ii.end(); ++j )
-            cout << *j << " ";
-        cout << endl << endl;
-    };
-
-     cout << endl << endl << "now we iterate over dir_diagonal_minor:" << endl;
-    for( auto ii = f.begin_dir_diagonal_minor(); ii!=f.end_dir_diagonal_minor(); ++ii ) {
-        cout << "pivot [ "<<ii.point_pivot.x<<", "<<ii.point_pivot.y<<" ] :    ";
-        for( auto j=ii.begin(); j!=ii.end(); ++j )
-            cout << *j << " ";
-        cout << endl << endl;
-    };
-     cout << endl << endl << "test loop over all the directions:" << endl;
-     lines_direction dirs[4] { dir_rows, dir_columns, dir_diagonal_main, dir_diagonal_minor };
-     for( auto i_dir : dirs )
-        for( auto ii = f.line_iterator_begin_by_dir(i_dir); ii->is_not_equal(*f.line_iterator_end_by_dir(i_dir)); ii->next() ) {
-            cout << "pivot [ "<<ii->point_pivot.x<<", "<<ii->point_pivot.y<<" ] :    ";
-            for( auto j=ii->begin(); j!=ii->end(); ++j )
-                cout << *j << " ";
-            cout << endl << endl;
-        };
-};
 
 namespace test{
     string format( double a ) {

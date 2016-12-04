@@ -18,7 +18,7 @@ class AI : public Lines
         void evaluate();
 
     protected:
-        void collect_move_candidates();
+        vector<AI_move*> collect_move_candidates();
         void flush_position_probabilities();
 
     private:

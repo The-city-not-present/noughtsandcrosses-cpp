@@ -82,6 +82,7 @@
 		<Unit filename="include/ai/ai_move.h" />
 		<Unit filename="include/ai/ai_position.h" />
 		<Unit filename="include/ai/ai_position_directory.h" />
+		<Unit filename="include/comment.hpp" />
 		<Unit filename="include/debug_code.hpp" />
 		<Unit filename="include/json_parse.h" />
 		<Unit filename="include/lines.h" />
