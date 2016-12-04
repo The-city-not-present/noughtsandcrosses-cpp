@@ -6,8 +6,8 @@ XY AI::find_move() {
         return XY{20,15};
     start_position = make_shared<AI_position_recursive>( &*field );
     evaluate();
-    //evaluate();
-    //evaluate();
+    evaluate();
+    evaluate();
     return XY{ start_position->moves[0].move.x+refmove.x, start_position->moves[0].move.y+refmove.y };
 };
 
@@ -21,6 +21,8 @@ void AI::evaluate() {
         };
     };
     start_position->recalculate_estimates();
+    AI_position_static::position_directory.delete_nulls();
+    AI_position_recursive::position_directory.delete_nulls();
 };
 
 vector<AI_move*> AI::collect_move_candidates() {

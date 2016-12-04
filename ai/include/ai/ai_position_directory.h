@@ -14,6 +14,7 @@ class AI_position_directory
         AI_position_prototype* search( Field<Field_cell_type>*, XY );
         AI_position_prototype* search( Field<Estimate_field_cell_type>*, XY );
         AI_position_directory& operator << ( AI_position_prototype* );
+        void delete_nulls();
         void purge( Field<Field_cell_type>* );
         void purge( Field<Estimate_field_cell_type>* );
 

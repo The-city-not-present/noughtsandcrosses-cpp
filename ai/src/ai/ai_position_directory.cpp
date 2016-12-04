@@ -39,13 +39,15 @@ AI_position_prototype* AI_position_directory::search( Field<Field_cell_type>* fi
     return nullptr;
 };
 
-void AI_position_directory::purge( Field<Field_cell_type>* field ) {
-    // TODO: реализовать
+void AI_position_directory::delete_nulls() {
     data.erase( remove( data.begin(), data.end(), nullptr ), data.end() );
 };
 
+void AI_position_directory::purge( Field<Field_cell_type>* field ) {
+    // TODO: реализовать
+};
+
 void AI_position_directory::purge( Field<Estimate_field_cell_type>* field ) {
-    data.erase( remove( data.begin(), data.end(), nullptr ), data.end() );
 };
 
 
