@@ -13,21 +13,21 @@ XY AI::find_move() {
 
 void AI::evaluate() {
     flush_position_probabilities();
-    for( int depth = 7; depth>=0; --depth ) { // max 7 iterations, but not guaranteed to be 7 moves deep
+    for( int depth = 3; depth>=0; --depth ) { // max 7 iterations, but not guaranteed to be 7 moves deep
         auto candidates = collect_move_candidates();
         for( auto &move_to_promote : candidates ) {
             move_to_promote->position.reset();
             move_to_promote->position = make_shared<AI_position_recursive>( &move_to_promote->parent_position->estimates_field, move_to_promote->move );
         };
+        AI_position_static::position_directory.delete_nulls();
     };
     start_position->recalculate_estimates();
-    AI_position_static::position_directory.delete_nulls();
     AI_position_recursive::position_directory.delete_nulls();
 };
 
 vector<AI_move*> AI::collect_move_candidates() {
     vector<AI_move*> whitelist;
-    double limit =0.35;
+    double limit =0.70;
     for( auto&position_abstract : AI_position_recursive::position_directory ) {
         AI_position_recursive* position = (AI_position_recursive*)position_abstract;
         for( auto& move : position->moves ) {
