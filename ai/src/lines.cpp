@@ -66,10 +66,10 @@ UV lines_translate_xy_to_uv( lines_direction d, XY xy, XY refmove ) {
 // ==Field_cell_type class
 
 Field_cell_type::Field_cell_type() : val(0) {};
-Field_cell_type::Field_cell_type( int _val ) : val(_val) {};
+Field_cell_type::Field_cell_type( int _val ) : val(1+2*(_val&1)) {};
 Field_cell_type::Field_cell_type( Val _val ) : val(_val) {};
 //Field_cell_type::Field_cell_type( Field_cell_type& _val ) : val(_val.val) {};
-Field_cell_type::operator int() const { return val; };
+Field_cell_type::operator int() const { if(val&1==0)throw runtime_error("Val : not a player cast to int");return val&2; };
 Field_cell_type::operator char () const { if((val&1)==0)return '_';return ((val&2)==0?'x':'o'); };
 Field_cell_type::operator string() const { if((val&1)==0)return "undefined";return ((val&2)==0?"cross":"nought"); };
 Field_cell_type::operator Val() const { return static_cast<Val>(val&3);/* младшие 2 бита*/ };

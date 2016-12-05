@@ -63,7 +63,7 @@ void AI_position_recursive::collect_moves_and_calculate_estimates() {
                 } );
             };
     for( auto& i : moves )
-        i.position->estimate[1-me] = 0.03 * (e_max - i.position->estimate[1-me] ) + 0.97 * e_max2;
+        i.position->estimate[1-me] = ( e_max-i.position->estimate[1-me]>e_max2 ? e_max-i.position->estimate[1-me] : e_max2 );
     recalculate_estimates();
 };
 
@@ -86,28 +86,6 @@ void AI_position_recursive::recalculate_estimates() {
             i->probability = 1.0 / win_moves.size();
         estimate[1-me] = 0;
         estimate[me]   = 1;
-    } else {
-        double p_sum = 0.0;
-        double_pair e_sum;
-        for( auto &i : moves ) {
-            if( i.get_estimate()[1-me]>=0.99999999 ) {
-                i.probability = 0;
-                continue;
-            };
-            double &a = i.get_estimate()[me];
-            double &b = i.get_estimate()[1-me];
-            i.probability = 1/(1+exp((1.0/(1.0-b) - 1.0/(1.0-a))/0.7213475204444817));
-            i.probability = i.probability * i.probability * i.probability;
-
-            p_sum += i.probability;
-            e_sum[0] += i.get_estimate()[0] * i.probability;
-            e_sum[1] += i.get_estimate()[1] * i.probability;
-        };
-        e_sum[0] = e_sum[0]/p_sum;
-        e_sum[1] = e_sum[1]/p_sum;
-        estimate = e_sum;
-        for( auto &i : moves )
-            i.probability = i.probability / p_sum;
     };
     sort(
         moves.begin(),
@@ -116,6 +94,42 @@ void AI_position_recursive::recalculate_estimates() {
             return (( a.probability - b.probability ) > 0 );
         }
     );
+    if( win_moves.size()>0 )
+        return;
+    double p_sum = 0.0;
+    double_pair e_sum;
+    if( moves.size()==0 )
+        throw runtime_error("no moves");
+    for( auto &i : moves ) {
+        if( i.get_estimate()[1-me]>=0.99999999 ) {
+            i.probability = 0;
+            continue;
+        };
+        double &a = i.get_estimate()[me];
+        double &b = i.get_estimate()[1-me];
+        i.probability = 1/(1+exp((1.0/(1.0-b) - 1.0/(1.0-a))/0.7213475204444817));
+    };
+    {
+        double &p = moves[0].probability;
+        double po = -1/((p-1)*(p-1)*(p-1)*(p-1)*(p-1));
+        for( auto &i : moves )
+            i.probability = pow( i.probability, 2*po );
+    };
+    for( auto &i : moves ) {
+        p_sum += i.probability;
+        e_sum[0] += i.get_estimate()[0] * i.probability;
+        e_sum[1] += i.get_estimate()[1] * i.probability;
+    };
+    if( p_sum==0 ) {
+        estimate[me] = 0;
+        estimate[1-me]   = 1;
+        return;
+    };
+    e_sum[0] = e_sum[0]/p_sum;
+    e_sum[1] = e_sum[1]/p_sum;
+    estimate = e_sum;
+    for( auto &i : moves )
+        i.probability = i.probability / p_sum;
 };
 
 

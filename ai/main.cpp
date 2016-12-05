@@ -13,7 +13,7 @@
 using namespace std;
 
 #include "comment.hpp"
-
+#include <cstdio>
 
 
 
@@ -28,9 +28,11 @@ public:
     };
     vector<string> messages;
     ~Finally_output() {
-        cout << "Content-type: text/html\n\n";
+        string s = "Content-type: application/json\n\n";
         for( auto &i : messages )
-            cout << i << endl;
+            s += i;
+        cout.sync_with_stdio(true);
+        cout << s;
     };
 };
 
@@ -45,9 +47,7 @@ int main( int argc, char** argv )
             else
                 movelist_str = cgi_processing::read_post();
             #ifdef DEBUG
-           if( movelist_str=="" )
-                movelist_str = "[{\"x\":10, \"y\":10}]";
-            movelist_str = "[{\"x\":28,\"y\":11},{\"x\":28,\"y\":10},{\"x\":29,\"y\":10},{\"x\":29,\"y\":11},{\"x\":28,\"y\":12},{\"x\":30,\"y\":12},{\"x\":31,\"y\":13},{\"x\":26,\"y\":8},{\"x\":27,\"y\":9},{\"x\":29,\"y\":13},{\"x\":31,\"y\":11},{\"x\":30,\"y\":13},{\"x\":30,\"y\":11},{\"x\":31,\"y\":12},{\"x\":30,\"y\":9},{\"x\":27,\"y\":12}]";
+            movelist_str = "[{\"x\":0,\"y\":0},{\"x\":0,\"y\":1},{\"x\":1,\"y\":0},{\"x\":1,\"y\":1},{\"x\":2,\"y\":0}]";
             #endif
             JSON_parse data(movelist_str);
             move_list& moves = data.data;
