@@ -65,25 +65,25 @@
 1480353112 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/lines_field.hpp
 	<cstring>
 
-1480973169 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai.cpp
+1481026845 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai.cpp
 	"ai/ai.h"
-	<math.h>
+	<cmath>
 
 1480716392 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/ai/ai.h
 	"lines.h"
 	"ai/ai_position.h"
 
-1480896015 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_estimates_field.cpp
+1481029601 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_estimates_field.cpp
 	"ai_estimates_field.h"
 
 1480711837 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/ai/ai_estimates_field.h
 	"lines.h"
 
-1480896359 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/lines.cpp
+1481023503 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/lines.cpp
 	"lines.h"
 	<vector>
 
-1480924847 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/main.cpp
+1481030178 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/main.cpp
 	<iostream>
 	<vector>
 	<cstdlib>
@@ -95,6 +95,7 @@
 	<string>
 	"comment.hpp"
 	<cstdio>
+	"debug_code.hpp"
 
 1480662944 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/read_post.h
 
@@ -117,10 +118,10 @@
 1480689619 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_move.cpp
 	"ai_move.h"
 
-1480972214 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_position.cpp
+1481030648 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_position.cpp
 	"ai/ai_position.h"
 	<algorithm>
-	<math.h>
+	<cmath>
 
 1480666299 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/debug_code.hpp
 
@@ -131,5 +132,5 @@
 	"ai_position_directory.h"
 	<algorithm>
 
-1480924288 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/comment.hpp
+1481029518 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/comment.hpp
 

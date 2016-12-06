@@ -1,9 +1,9 @@
 #include "ai/ai.h"
-#include <math.h>
+#include <cmath>
 
 XY AI::find_move() {
     if( field->moves_count==0 )
-        return XY{20,15};
+        return refmove;
     start_position = make_shared<AI_position_recursive>( &*field );
     //evaluate();
     //evaluate();

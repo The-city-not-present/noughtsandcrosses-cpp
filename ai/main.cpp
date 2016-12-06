@@ -47,17 +47,17 @@ int main( int argc, char** argv )
             else
                 movelist_str = cgi_processing::read_post();
             #ifdef DEBUG
-            movelist_str = "[{\"x\":0,\"y\":0},{\"x\":0,\"y\":1},{\"x\":1,\"y\":0},{\"x\":1,\"y\":1},{\"x\":2,\"y\":0}]";
+            movelist_str = "[{\"x\":0,\"y\":0},{\"x\":0,\"y\":1},{\"x\":1,\"y\":0},{\"x\":1,\"y\":1},{\"x\":2,\"y\":0},{\"x\":-1,\"y\":0}]";
             #endif
             JSON_parse data(movelist_str);
             move_list& moves = data.data;
             // ветка А
             AI ai(moves);
+            XY xy = ai.find_move();
             // debug
             #ifdef DEBUG
-            //#include "debug_code.hpp"
+            #include "debug_code.hpp"
             #endif
-            XY xy = ai.find_move();
             stringstream s;
             s << "{\"x\":" << xy.x << ",\"y\":" << xy.y << ", \"comment\":\""+comment::ai_comment(ai)+"\"}";
             output << s.str();

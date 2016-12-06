@@ -105,7 +105,7 @@ Lines::Lines( move_list& arg ) : refmove({20,15})
     field = unique_ptr<Field<Field_cell_type>>( new Field<Field_cell_type>(ctx) );
     int t = 0;
     for( const auto& i : arg )
-        (*field)[XY({i.x-refmove.x,i.y-refmove.y})] = ((t++)&1) * 2 + 1;
+        (*field)[XY({i.x-refmove.x,i.y-refmove.y})] = ( ((t++)&1)==0 ? cross : nought );
     field->moves_count = arg.size();
 }
 
@@ -129,6 +129,6 @@ Field_cell_type Lines::checkwin() {
                 if( t_1>=5 ) return Field_cell_type{nought};
             };
         };
-    return Field_cell_type{}; // equal to false - all bits are 0 and we treat this as undefined aka false; Thehe is a cast operator
+    return Field_cell_type{}; // equal to false - all bits are 0 and we treat this as undefined
 };
 
