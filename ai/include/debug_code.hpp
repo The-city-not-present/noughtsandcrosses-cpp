@@ -15,4 +15,4 @@
         cerr << "exception:  " << e.what() << endl;
         return 0xff;
     };
-    cout << "Have a nice day!" << endl;
+    cout << "Have a nice day! Debug is done" << endl;

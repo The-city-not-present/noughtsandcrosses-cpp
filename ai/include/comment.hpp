@@ -6,17 +6,18 @@ namespace comment {
     string str3( string arg ) { return string("   "+arg).substr(arg.length(),string::npos); };
     string str3( int arg ) { stringstream s;s << arg; return str3(s.str()); };
 
-    string comment_position_deployment( AI_position_recursive*const node, string prefix={} ) {
+    string comment_position_deployment( AI_position_recursive*const node, string prefix={}, int moves_to_show = {5} ) {
         string result;
-        const int count = 225;
         string endl = "<br />";
-        result += prefix+"estimate: [ "+str5(node->estimate[0])+"  "+str5(node->estimate[1])+" ]  count= "+str5((int)node->moves.size()) + endl;
+        string result_append;
+        result_append = prefix+"estimate: [ "+str5(node->estimate[0])+"  "+str5(node->estimate[1])+" ]  count= "+str5((int)node->moves.size());
+        result += result_append + string((size_t)(90-result_append.size()),(char)' ')+"#"+str3(node->id()) + endl;
         prefix += "    ";
         int counter = 0;
         bool soft = false;
         bool last_is_soft = false;
         for( auto& i : node->moves ) {
-            if( ++counter>count )
+            if( ++counter>moves_to_show )
                 soft = true;
             if(
                !soft ||
@@ -39,7 +40,7 @@ namespace comment {
     string ai_comment( AI& ai ) {
         if( !ai.start_position )
             return "no position";
-        return comment_position_deployment( ai.start_position.get() );
+        return comment_position_deployment( ai.start_position.get(), "", 1000 );
     };
 };
 

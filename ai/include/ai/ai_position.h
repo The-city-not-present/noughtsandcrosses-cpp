@@ -22,9 +22,10 @@ class AI_position_prototype {
 
         double probability_global = {0};
         virtual void update_probability_global( double ) = 0;
-        virtual void recalculate_estimates() = 0;
+        virtual void recalculate_estimates_recursive() = 0;
         virtual const bool is_static() = 0;
         virtual const bool is_recursive() = 0;
+        virtual const int id() = 0;
 };
 
 
@@ -48,12 +49,16 @@ class AI_position_recursive : public AI_position_prototype
 
         const bool is_static() { return false; };
         const bool is_recursive() { return true; };
+        const int id() { return position_id; };
 
         void update_probability_global( double );
         void recalculate_estimates();
+        void recalculate_estimates_recursive();
 
         static AI_position_directory position_directory;
+        static int position_index;
     protected:
+        int position_id;
         void collect_moves_and_calculate_estimates(); // called once in constructor
 
     private:
@@ -71,13 +76,17 @@ class AI_position_static : public AI_position_prototype {
 
         const bool is_static() { return true; };
         const bool is_recursive() { return false; };
+        const int id() { return position_id; };
 
         void update_probability_global( double );
-        void recalculate_estimates() {};
+        void recalculate_estimates_recursive() {};
 
         ~AI_position_static();
 
         static AI_position_directory position_directory;
+        static int position_index;
+    protected:
+        int position_id;
 };
 
 #endif // AI_POSITION_H

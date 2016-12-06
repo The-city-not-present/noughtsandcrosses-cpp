@@ -47,7 +47,7 @@ int main( int argc, char** argv )
             else
                 movelist_str = cgi_processing::read_post();
             #ifdef DEBUG
-            movelist_str = "[{\"x\":0,\"y\":0},{\"x\":0,\"y\":1},{\"x\":1,\"y\":0},{\"x\":1,\"y\":1},{\"x\":2,\"y\":0},{\"x\":-1,\"y\":0}]";
+            movelist_str = "[{\"x\":28,\"y\":6},{\"x\":28,\"y\":7},{\"x\":29,\"y\":6},{\"x\":29,\"y\":7},{\"x\":30,\"y\":6},{\"x\":27,\"y\":6},{\"x\":30,\"y\":7},{\"x\":26,\"y\":5}]";
             #endif
             JSON_parse data(movelist_str);
             move_list& moves = data.data;

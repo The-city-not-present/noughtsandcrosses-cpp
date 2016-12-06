@@ -5,14 +5,14 @@ XY AI::find_move() {
     if( field->moves_count==0 )
         return refmove;
     start_position = make_shared<AI_position_recursive>( &*field );
-    for( int count=0; count<4; count++ )
+    for( int count=0; count<5; count++ )
         evaluate();
     return XY{ start_position->moves[0].move.x+refmove.x, start_position->moves[0].move.y+refmove.y };
 };
 
 void AI::evaluate() {
     flush_position_probabilities();
-    for( int depth = 6; depth>=0; --depth ) { // max 7 iterations, but not guaranteed to be 7 moves deep
+    for( int depth = 7; depth>=0; --depth ) { // max 7 iterations, but not guaranteed to be 7 moves deep
         auto candidates = collect_move_candidates();
         if( candidates.size()==0 )
             break;
@@ -22,13 +22,13 @@ void AI::evaluate() {
         };
         AI_position_static::position_directory.delete_nulls();
     };
-    start_position->recalculate_estimates();
+    start_position->recalculate_estimates_recursive();
     AI_position_recursive::position_directory.delete_nulls();
 };
 
 vector<AI_move*> AI::collect_move_candidates() {
     vector<AI_move*> whitelist;
-    double limit =0.70;
+    double limit =0.60;
     for( auto&position_abstract : AI_position_recursive::position_directory ) {
         AI_position_recursive* position = (AI_position_recursive*)position_abstract;
         for( auto& move : position->moves ) {
