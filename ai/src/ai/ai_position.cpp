@@ -9,29 +9,29 @@
 // == 2. AI_position_recursive ==
 
 AI_position_recursive::AI_position_recursive( Field<Field_cell_type> *o ) : estimates_field(o) {
-    this->moves_count = estimates_field.moves_count;
     estimates_field.calculate();
+    this->moves_count = o->moves_count+1;
     collect_moves_and_calculate_estimates();
     position_directory << this;
 }
 
 AI_position_recursive::AI_position_recursive( Field<Field_cell_type> *o, XY p ) : estimates_field(o,p) {
-    this->moves_count = estimates_field.moves_count;
     estimates_field.calculate();
+    this->moves_count = o->moves_count+1;
     collect_moves_and_calculate_estimates();
     position_directory << this;
 }
 
 AI_position_recursive::AI_position_recursive( Field<Estimate_field_cell_type> *o ) : estimates_field(o) {
-    this->moves_count = estimates_field.moves_count;
     estimates_field.calculate();
+    this->moves_count = o->moves_count+1;
     collect_moves_and_calculate_estimates();
     position_directory << this;
 }
 
 AI_position_recursive::AI_position_recursive( Field<Estimate_field_cell_type> *o, XY p ) : estimates_field(o,p) {
-    this->moves_count = estimates_field.moves_count;
     estimates_field.calculate();
+    this->moves_count = o->moves_count+1;
     collect_moves_and_calculate_estimates();
     position_directory << this;
 }

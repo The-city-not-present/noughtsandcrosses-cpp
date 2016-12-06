@@ -65,7 +65,7 @@
 1480353112 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/lines_field.hpp
 	<cstring>
 
-1480885230 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai.cpp
+1480973169 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai.cpp
 	"ai/ai.h"
 	<math.h>
 
@@ -83,7 +83,7 @@
 	"lines.h"
 	<vector>
 
-1480922965 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/main.cpp
+1480924847 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/main.cpp
 	<iostream>
 	<vector>
 	<cstdlib>
@@ -117,7 +117,7 @@
 1480689619 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_move.cpp
 	"ai_move.h"
 
-1480922592 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_position.cpp
+1480972214 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_position.cpp
 	"ai/ai_position.h"
 	<algorithm>
 	<math.h>
