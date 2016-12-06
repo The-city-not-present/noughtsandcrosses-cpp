@@ -22,7 +22,7 @@ namespace comment {
                !soft ||
                i.position->is_recursive()
             ) {
-                result += prefix+"("+str3(i.move.x)+","+str3(i.move.y)+" ) e=  [ "+str5(i.get_estimate()[0])+"  "+str5(i.get_estimate()[1])+" ] p=  "+str5(i.probability) + (i.position->is_recursive()?"  ->":"") + endl;
+                result += prefix+str3(counter)+": ("+str3(i.move.x)+","+str3(i.move.y)+" ) e=  [ "+str5(i.get_estimate()[0])+"  "+str5(i.get_estimate()[1])+" ] p=  "+str5(i.probability) + (i.position->is_recursive()?"  ->":"") + endl;
                 last_is_soft = false;
             } else {
                 if( soft && !last_is_soft ) {

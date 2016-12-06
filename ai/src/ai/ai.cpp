@@ -5,16 +5,17 @@ XY AI::find_move() {
     if( field->moves_count==0 )
         return refmove;
     start_position = make_shared<AI_position_recursive>( &*field );
-    //evaluate();
-    //evaluate();
-    //evaluate();
+    for( int count=0; count<4; count++ )
+        evaluate();
     return XY{ start_position->moves[0].move.x+refmove.x, start_position->moves[0].move.y+refmove.y };
 };
 
 void AI::evaluate() {
     flush_position_probabilities();
-    for( int depth = 3; depth>=0; --depth ) { // max 7 iterations, but not guaranteed to be 7 moves deep
+    for( int depth = 6; depth>=0; --depth ) { // max 7 iterations, but not guaranteed to be 7 moves deep
         auto candidates = collect_move_candidates();
+        if( candidates.size()==0 )
+            break;
         for( auto &move_to_promote : candidates ) {
             move_to_promote->position.reset();
             move_to_promote->position = make_shared<AI_position_recursive>( &move_to_promote->parent_position->estimates_field, move_to_promote->move );

@@ -138,50 +138,6 @@ void AI_position_recursive::recalculate_estimates() {
         estimate[1-me]   = 1;
     };
 };
-/*void AI_position_recursive::recalculate_estimates() {
-    char me = moves_count&1;
-    vector<AI_move*> win_moves;
-    for( auto& i : moves )
-        if( i.get_estimate()[me]>=0.99999999 )
-            win_moves.push_back( &i );
-    if( win_moves.size()>0 ) {
-        for( auto &i : moves )
-            i.probability = 0;
-        for( auto &i : win_moves )
-            i->probability = 1.0 / win_moves.size();
-        estimate[1-me] = 0;
-        estimate[me]   = 1;
-    } else {
-        double p_sum = 0.0;
-        double_pair e_sum;
-        for( auto &i : moves ) {
-            if( i.get_estimate()[1-me]>=0.99999999 ) {
-                i.probability = 0;
-                continue;
-            };
-            double &a = i.get_estimate()[me];
-            double &b = i.get_estimate()[1-me];
-            i.probability = 1/(1+exp((1.0/(1.0-b) - 1.0/(1.0-a))/0.7213475204444817));
-            i.probability = i.probability * i.probability * i.probability;
-
-            p_sum += i.probability;
-            e_sum[0] += i.get_estimate()[0] * i.probability;
-            e_sum[1] += i.get_estimate()[1] * i.probability;
-        };
-        e_sum[0] = e_sum[0]/p_sum;
-        e_sum[1] = e_sum[1]/p_sum;
-        estimate = e_sum;
-        for( auto &i : moves )
-            i.probability = i.probability / p_sum;
-    };
-    sort(
-        moves.begin(),
-        moves.end(),
-        [&me] ( const AI_move& a, const AI_move& b ) -> bool {
-            return (( a.probability - b.probability ) > 0 );
-        }
-    );
-};*/
 
 
 

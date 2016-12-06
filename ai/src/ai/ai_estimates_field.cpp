@@ -60,7 +60,7 @@ AI_estimates_field::AI_estimates_field( Field<Field_cell_type>* p, XY add ) {
         for( point.x = p->ctx.x_min; point.x<p->ctx.x_max+1; ++point.x )
             if( (bool)(*p)[point] )
                 (*this)[point].player = (*p)[point];
-    (*this)[add].player = p->moves_count&1;
+    (*this)[add].player = ( p->moves_count&1==0 ? cross : nought );
 };
 
 AI_estimates_field::AI_estimates_field( Field<Estimate_field_cell_type>* p ) {
@@ -96,7 +96,7 @@ AI_estimates_field::AI_estimates_field( Field<Estimate_field_cell_type>* p, XY a
         for( point.x = p->ctx.x_min; point.x<p->ctx.x_max+1; ++point.x )
             if( (bool)(*p)[point] )
                 (*this)[point].player = (*p)[point].player;
-    (*this)[add].player = p->moves_count&1;
+    (*this)[add].player = ( p->moves_count&1==0 ? cross : nought );
 };
 
 // важнейшая функция
