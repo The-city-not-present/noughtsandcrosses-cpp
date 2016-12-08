@@ -1,11 +1,12 @@
 #include "ai/ai.h"
 #include <cmath>
+#include <map>
 
 XY AI::find_move() {
     if( field->moves_count==0 )
         return refmove;
-    start_position = make_shared<AI_position_recursive>( &*field );
-    for( int count=0; count<1; count++ )
+    start_position = unique_ptr<AI_position_recursive>( new AI_position_recursive{&*field} );
+    for( int count=0; count<3; count++ )
         evaluate();
     return XY{ start_position->moves[0].move.x+refmove.x, start_position->moves[0].move.y+refmove.y };
 };
@@ -18,39 +19,41 @@ void AI::evaluate() {
             break;
         for( auto &move_to_promote : candidates ) {
             move_to_promote->position.reset();
-            move_to_promote->position = make_shared<AI_position_recursive>( &move_to_promote->parent_position->estimates_field, move_to_promote->move );
+            move_to_promote->position = unique_ptr<AI_position_recursive>( new AI_position_recursive{ &move_to_promote->parent_position->estimates_field, move_to_promote->move } );
         };
-        AI_position_static::position_directory.delete_nulls();
     };
-    start_position->recalculate_estimates_recursive();
-    AI_position_recursive::position_directory.delete_nulls();
+    recalculate_estimates_recursive();
 };
 
 vector<AI_move*> AI::collect_move_candidates() {
     vector<AI_move*> whitelist;
     double limit =0.55;
-    for( auto&position_abstract : AI_position_recursive::position_directory ) {
-        AI_position_recursive* position = (AI_position_recursive*)position_abstract;
-        for( auto& move : position->moves ) {
-            double limit_virtual = 1.0 - (1.0-limit) * pow(move.probability * position->probability_global,0.1);
-            if(
-              ( ( move.get_estimate()[0]>limit_virtual ) ||
-                ( move.get_estimate()[1]>limit_virtual ) ) &&
-                ( move.get_estimate()[0]<0.9999999     ) &&
-                ( move.get_estimate()[1]<0.9999999     ) &&
-                move.position->is_static()
-            )
-                whitelist.push_back( &move );
-        };
-    };
+    for( auto position_depth=AI_position_recursive::position_directory.data.rbegin(); position_depth!=AI_position_recursive::position_directory.data.rend(); position_depth++ )
+        for( auto &position : position_depth->second )
+            for( auto& move : position->moves ) {
+                double limit_virtual = 1.0 - (1.0-limit) * pow(move.probability * position->probability_global,0.1);
+                if(
+                  ( ( move.get_estimate()[0]>limit_virtual ) ||
+                    ( move.get_estimate()[1]>limit_virtual ) ) &&
+                    ( move.get_estimate()[0]<0.9999999     ) &&
+                    ( move.get_estimate()[1]<0.9999999     ) &&
+                    move.position->is_static()
+                )
+                    whitelist.push_back( &move );
+            };
     return whitelist;
 };
 
 void AI::flush_position_probabilities() {
-    for( auto &i : AI_position_recursive::position_directory )
-        i->probability_global = 0;
-    for( auto &i : AI_position_static::position_directory )
-        i->probability_global = 0;
+    for( auto position_depth=AI_position_recursive::position_directory.data.rbegin(); position_depth!=AI_position_recursive::position_directory.data.rend(); position_depth++ )
+        for( auto &i : position_depth->second )
+            i->probability_global = 0;
     start_position->update_probability_global( 1 );
+};
+
+void AI::recalculate_estimates_recursive() {
+    for( auto position_depth=AI_position_recursive::position_directory.data.rbegin(); position_depth!=AI_position_recursive::position_directory.data.rend(); position_depth++ )
+        for( auto &i : position_depth->second )
+            i->recalculate_estimates();
 };
 

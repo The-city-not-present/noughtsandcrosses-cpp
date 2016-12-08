@@ -9,9 +9,9 @@ inline double calc_est( char n, bool player_is_me ) {
     case 5:
         return 1.0;
     case 4:
-        return ( player_is_me ? 1.0  : 0.999 );
+        return ( player_is_me ? 1.0  : 0.995 );
     case 3:
-        return ( player_is_me ? 0.91 : 0.83 );
+        return ( player_is_me ? 0.88 : 0.75 );
     case 2:
         return ( player_is_me ? 0.2  : 0.12 );
     case 1:

@@ -228,7 +228,34 @@
  	human.ai_status = 'human';
  	human.title = 'human';
  	
- 	function http_server_ai() {
+	function http_server_ai() {
+ 		window['data_http_server_move'] = true;
+		$.ajax( {
+			url: "/noughtsandcrosses/code/",
+			type: "post",
+			data: JSON.stringify(game.moves) ,
+			success: function (response) {
+				var r = response;
+				if( r["comment"]!=undefined ) {
+					console.log(r.comment);
+					$('#comment_zone').val(r.comment.replace(/<br\s*\/?>/gi,"\n"));
+				};
+				if( r["error"]!=undefined ) {
+					console.log('ошибка:  '+r.error);
+					$('#comment_zone').val('ошибка:  '+r.error);
+				};
+				if( !game.move( response ) )
+					game_log('недопустимый ход!');
+		 		window['data_http_server_move'] = false;
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				alert('ошибка:  '+textStatus+'  '+errorThrown);
+				game_log('ошибка:  '+textStatus+'  '+errorThrown);
+				console.log(textStatus, errorThrown);
+			}
+		});
+	};
+ 	/*function http_server_ai() {
  		window['data_http_server_move'] = true;
  		http_server_ai.xhr = new XMLHttpRequest();
  		http_server_ai.xhr.open( 'POST', '/noughtsandcrosses/code/', true );
@@ -260,7 +287,7 @@
 				};
 		};
  		window['data_http_server_move'] = false;
- 	}
+ 	}*/
  	http_server_ai.ai_status = 'server ai engine';
  	http_server_ai.title = 'HTTP server engine';
  	

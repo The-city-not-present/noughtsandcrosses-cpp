@@ -17,7 +17,7 @@ class AI_move
 
         XY move;
         AI_position_recursive* parent_position;
-        shared_ptr<AI_position_prototype> position;
+        unique_ptr<AI_position_prototype> position;
         double_pair& get_estimate();
         double_pair est_base;
         double probability = {0};

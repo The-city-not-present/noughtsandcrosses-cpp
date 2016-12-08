@@ -13,13 +13,14 @@ class AI : public Lines
         AI( Lines& ) = delete;
         AI( move_list& m ) : Lines(m) {};
         XY find_move();
-        shared_ptr<AI_position_recursive> start_position;
+        unique_ptr<AI_position_recursive> start_position;
 
         void evaluate();
 
     protected:
         vector<AI_move*> collect_move_candidates();
         void flush_position_probabilities();
+        void recalculate_estimates_recursive();
 
     private:
 };

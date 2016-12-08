@@ -42,12 +42,6 @@ AI_position_recursive::AI_position_recursive( Field<Estimate_field_cell_type> *o
     position_directory << this;
 }
 
-AI_position_recursive::~AI_position_recursive() {
-    for( auto& i : position_directory )
-        if( i==this )
-            i=nullptr;
-};
-
 void AI_position_recursive::collect_moves_and_calculate_estimates() {
     XY point;
     char me = estimates_field.moves_count&1;
@@ -145,34 +139,18 @@ void AI_position_recursive::recalculate_estimates() {
     };
 };
 
-void AI_position_recursive::recalculate_estimates_recursive() {
-    for( auto &move : moves )
-        move.position->recalculate_estimates_recursive();
-    recalculate_estimates();
-};
-
 
 
 
 // == 3. AI_position_static ==
 
-int AI_position_static::position_index = 0;
-
 AI_position_static::AI_position_static( int count, double_pair e ) {
-    position_id = position_index++;
     this->moves_count  = count;
     this->estimate = e;
-    position_directory << this;
-};
-
-AI_position_static::~AI_position_static() {
-    for( auto& i : position_directory )
-        if( i==this )
-            i=nullptr;
 };
 
 void AI_position_static::update_probability_global( double val ) {
-    probability_global = 1-(1-probability_global)*(1-val);
+    probability_global = val;
 };
 
 
