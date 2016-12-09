@@ -6,6 +6,9 @@
 #include "json_parse.h"
 #include "ai/ai.h"
 #include "read_post.h"
+#include "logname.h"
+#include <chrono>
+#include <ctime>
 
 #include <sstream> // где-то для конверсии чисел в строки через stringstream
 #include <string>
@@ -31,6 +34,7 @@ public:
         string s = "Content-type: application/json\n\n";
         for( auto &i : messages )
             s += i;
+        log_harddrive << "timestamp: "<<std::time(nullptr)<<endl<<"program reached the end" << endl;
         cout.sync_with_stdio(true);
         cout << s;
     };
@@ -49,11 +53,13 @@ int main( int argc, char** argv )
             #ifdef DEBUG
             movelist_str = "[{\"x\":28,\"y\":6},{\"x\":28,\"y\":7},{\"x\":29,\"y\":6},{\"x\":29,\"y\":7},{\"x\":30,\"y\":6},{\"x\":27,\"y\":6},{\"x\":30,\"y\":7},{\"x\":26,\"y\":5}]";
             #endif
+            log_harddrive << endl<<endl<<endl<<endl<<"timestamp: " << std::time(0) << endl << "program started with arguments" << endl << movelist_str << endl << std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() ) << endl << endl;
             JSON_parse data(movelist_str);
             move_list& moves = data.data;
             // ветка А
             AI ai(moves);
             XY xy = ai.find_move();
+            log_harddrive << "   found best move [ "<<xy.x<<", "<<xy.y<<" ]" << endl;
             // debug
             #ifdef DEBUG
             #include "debug_code.hpp"

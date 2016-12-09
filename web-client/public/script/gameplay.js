@@ -209,9 +209,9 @@ Game.prototype = {
 			// проверим, не пора ли "прощай, пиздабол"
 			this.winner = this.l.check_win();
 			// если ещё нет, может, всё же, пора?
-			if( this.moves.length > 200 ) {
+			if( this.moves.length > 140 ) {
 				this.win_but_draw = true;
-				this.winner -1;
+				this.winner = -1;
 			};
 			if( this.verbose>1 )
 				console.log( 'game : move #'+this.moves.length+'  [ '+(ax-this.moves[0].x)+', '+(ay-this.moves[0].y)+' ]       ( '+ax+', '+ay+' )       ( '+(isFinite(this.players[0].last_move_delay_val)?Math.round(this.players[0].last_move_delay_val/100)/10+' s':'-')+', '+(isFinite(this.players[1].last_move_delay_val)?Math.round(this.players[1].last_move_delay_val/100)/10+' s':'-')+' )' );
@@ -223,10 +223,11 @@ Game.prototype = {
 		// нельзя написать просто else, так как там внутри ифа тоже проверяется winner
 		if( this.winner !== false ) {
 			this.finish( false );
-			this.windata = [
-				this.l.translate_ij_to_xy( this.l.windata[0].x, this.l.windata[0].y, this.moves[0] ),
-				this.l.translate_ij_to_xy( this.l.windata[1].x, this.l.windata[1].y, this.moves[0] )
-			];
+			if( this.winner>=0 )
+				this.windata = [
+					this.l.translate_ij_to_xy( this.l.windata[0].x, this.l.windata[0].y, this.moves[0] ),
+					this.l.translate_ij_to_xy( this.l.windata[1].x, this.l.windata[1].y, this.moves[0] )
+				];
 			if( this.verbose>0 ) {
 				var win_str = '==';
 				if( this.winner === 0 )

@@ -18,7 +18,7 @@ class AI : public Lines
         void evaluate();
 
     protected:
-        vector<AI_move*> collect_move_candidates();
+        vector<AI_move*> collect_move_candidates( double limit=0.55 );
         void flush_position_probabilities();
         void recalculate_estimates_recursive();
 

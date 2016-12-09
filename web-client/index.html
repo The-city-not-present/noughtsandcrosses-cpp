@@ -9,6 +9,14 @@
 	<script type="text/javascript" src="public/script/jquery-3.1.1.min.js"></script>
 	<script type="text/javascript" src="public/script/lines.js"></script>
 	<script type="text/javascript" src="public/script/gameplay.js"></script>
+	<!-- archive ai`s -->
+	<script type="text/javascript" src="public/script/archive_ai/ai_0_0_3.js"></script>
+	<script type="text/javascript" src="public/script/archive_ai/ai_0_0_4.js"></script>
+	<script type="text/javascript" src="public/script/archive_ai/ai_0_0_5.js"></script>
+	<script type="text/javascript" src="public/script/archive_ai/ai_0_0_6.js"></script>
+	<!-- matching -->
+	<script type="text/javascript" src="public/script/match/match.js"></script>
+	<script type="text/javascript" src="public/script/game_match_old/gamematch.js"></script>
 </head>
 <body>
 	<h1>игра в «крестики-нолики» на свободном поле</h1></body>
@@ -237,7 +245,7 @@
 			success: function (response) {
 				var r = response;
 				if( r["comment"]!=undefined ) {
-					console.log(r.comment);
+					//console.log(r.comment);
 					$('#comment_zone').val(r.comment.replace(/<br\s*\/?>/gi,"\n"));
 				};
 				if( r["error"]!=undefined ) {
@@ -249,6 +257,7 @@
 		 		window['data_http_server_move'] = false;
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
+				//andrej_move_0_0_3();
 				alert('ошибка:  '+textStatus+'  '+errorThrown);
 				game_log('ошибка:  '+textStatus+'  '+errorThrown);
 				console.log(textStatus, errorThrown);
@@ -382,6 +391,9 @@
 
 		<div id="field" class="show-first-move"></div>
 
+		<pre name="ratt" id="ratt">elo ratings here
+		</pre>
+		
 		<div id="game_log" style="background: #ddd; margin: 10px 0 0; padding: 10px; "></div>
 <!-- /BODY -->
 
