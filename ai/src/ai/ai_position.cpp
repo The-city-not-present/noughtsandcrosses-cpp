@@ -63,7 +63,6 @@ void AI_position_recursive::collect_moves_and_calculate_estimates() {
                 } );
             };
     for( auto& i : moves )
-//        i.position->estimate[1-me] = 0.03 * (e_max - i.position->estimate[1-me] ) + 0.97 * e_max2;
         i.position->estimate[1-me] = 0.8 * ( e_max-i.position->estimate[1-me]>e_max2 ? e_max-i.position->estimate[1-me] : e_max2 ) + 0.2 * (e_max-i.position->estimate[1-me]);
     recalculate_estimates();
 };
@@ -112,8 +111,12 @@ void AI_position_recursive::recalculate_estimates() {
    sort(
         moves.begin(),
         moves.end(),
-        [&me] ( const AI_move& a, const AI_move& b ) -> bool {
-            return (( a.probability - b.probability ) > 0 );
+        [&me] ( AI_move& a, AI_move& b ) -> bool {
+            return (
+                a.probability!=b.probability ?
+                (( a.probability - b.probability ) >= 0 ) :
+                (( a.est_base[me] - b.est_base[me] ) > 0 )
+            );
         }
     );
     {

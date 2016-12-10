@@ -9,6 +9,9 @@ class AI_position_prototype;
 class AI_position_recursive;
 class AI_position_static;
 
+// using raw pointers and unique_ptr to children in tree structure
+// according to advice
+// http://stackoverflow.com/questions/6679482/smart-pointers-for-modelling-a-general-tree-structure-its-iterators
 
 class AI_move
 {

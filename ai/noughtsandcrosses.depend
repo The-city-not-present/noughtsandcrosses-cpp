@@ -85,7 +85,7 @@
 	"lines.h"
 	<vector>
 
-1481325886 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/main.cpp
+1481327821 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/main.cpp
 	<iostream>
 	<vector>
 	<cstdlib>
@@ -102,7 +102,7 @@
 	<cstdio>
 	"debug_code.hpp"
 
-1480662944 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/read_post.h
+1481393501 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/read_post.h
 
 1480354129 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai_position.cpp
 	"ai/ai_position.h"
@@ -115,7 +115,7 @@
 	"ai/ai_move.h"
 	"ai/ai_position_directory.h"
 
-1481199500 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/ai/ai_move.h
+1481399825 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/ai/ai_move.h
 	"lines.h"
 	"ai/ai_estimates_field.h"
 	"ai/ai_position.h"
