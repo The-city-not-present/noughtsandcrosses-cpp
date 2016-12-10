@@ -87,6 +87,7 @@
 		<Unit filename="include/json_parse.h" />
 		<Unit filename="include/lines.h" />
 		<Unit filename="include/lines_field.hpp" />
+		<Unit filename="include/logname.h" />
 		<Unit filename="include/read_post.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/ai/ai.cpp" />
@@ -96,6 +97,7 @@
 		<Unit filename="src/ai/ai_position_directory.cpp" />
 		<Unit filename="src/json_parse.cpp" />
 		<Unit filename="src/lines.cpp" />
+		<Unit filename="src/logname.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

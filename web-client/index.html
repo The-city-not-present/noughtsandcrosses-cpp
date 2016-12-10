@@ -241,7 +241,7 @@
 		$.ajax( {
 			url: "/noughtsandcrosses/code/",
 			type: "post",
-			data: JSON.stringify(game.moves) ,
+			data: JSON.stringify(game.moves)+"\0" ,
 			success: function (response) {
 				var r = response;
 				if( r["comment"]!=undefined ) {

@@ -4,6 +4,8 @@
 	- закончена игра
 */
 
+setTimeout(function(){if(match.running!='running')return;ratings();$('#ratt').text(ratings.to_string());},8000)
+
 
 function match( participants, positions ) {
 	if(match.running!='idle'){
