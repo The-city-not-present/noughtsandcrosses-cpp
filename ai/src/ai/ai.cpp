@@ -35,17 +35,14 @@ bool AI::evaluate() {
     return true;
 };
 
-vector<AI_move*> AI::collect_move_candidates( double limit ) {
+vector<AI_move*> AI::collect_move_candidates( long double limit ) {
     vector<AI_move*> whitelist;
     for( auto position_depth=AI_position_recursive::position_directory.data.rbegin(); position_depth!=AI_position_recursive::position_directory.data.rend(); position_depth++ )
         for( auto &position : position_depth->second )
             for( auto& move : position->moves ) {
-                double limit_virtual = 1.0 - (1.0-limit) * pow(move.probability * position->probability_global,0.1);
+                long double limit_virtual = 1.0 - (1.0-limit) * pow(move.probability * position->probability_global,0.1);
                 if(
-                  ( ( move.get_estimate()[0]>limit_virtual ) ||
-                    ( move.get_estimate()[1]>limit_virtual ) ) &&
-                    ( move.get_estimate()[0]<0.9999999     ) &&
-                    ( move.get_estimate()[1]<0.9999999     ) &&
+                    move.position->reliability<(1.0-limit_virtual) &&
                     move.position->is_static()
                 )
                     whitelist.push_back( &move );

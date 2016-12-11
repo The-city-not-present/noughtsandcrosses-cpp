@@ -7,19 +7,21 @@
 
 struct double_pair {
     double_pair() : s0(0), s1(0) {};
-    double_pair( double a, double b ) : s0(a), s1(b) {};
-    double s0;
-    double s1;
-    double& operator [] ( char index ) { return ( index==0 ? s0 : s1 ); };
+    double_pair( long double a, long double b ) : s0(a), s1(b) {};
+    long double s0;
+    long double s1;
+    long double& operator [] ( char index ) { return ( index==0 ? s0 : s1 ); };
+    const long double operator [] ( char index ) const { return ( index==0 ? s0 : s1 ); };
 };
 
 struct Estimate_field_cell_type {
     Estimate_field_cell_type() : s0(0), s1(0) {};
     Field_cell_type player;
-    double s0;
-    double s1;
+    long double s0;
+    long double s1;
     operator double_pair() { return double_pair{s0,s1}; };
-    double& operator [] ( char index ) { return ( index==0 ? s0 : s1 ); };
+    long double& operator [] ( char index ) { return ( index==0 ? s0 : s1 ); };
+    const long double operator [] ( char index ) const { return ( index==0 ? s0 : s1 ); };
     operator bool () const { return (bool)player; };
 };
 
@@ -41,8 +43,8 @@ class AI_estimates_field : public Field<Estimate_field_cell_type>
         AI_estimates_field& operator = ( AI_estimates_field& ) = delete;
         void calculate();
 
-        static double calc_est_data[14];
-        static double calc_est( char, bool );
+        static long double calc_est_data[14];
+        static long double calc_est( char, bool );
 
     protected:
 

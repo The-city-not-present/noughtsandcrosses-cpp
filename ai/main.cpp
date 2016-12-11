@@ -112,7 +112,7 @@ int main( int argc, char** argv )
 }
 
 namespace test{
-    string format( double a ) {
+    string format( long double a ) {
         int aa = 10000 * a;
         stringstream sss;
         sss << aa;

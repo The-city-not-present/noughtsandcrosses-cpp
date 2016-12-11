@@ -2,10 +2,10 @@
 
 
 
-double AI_estimates_field::calc_est_data[14] = { 1.0, 1.0, 1.0, 0.995, 0.88, 0.75, 0.19, 0.13, 0.09, 0.08, 0.0006, 0.0005, 0.0, 0.0 };
+long double AI_estimates_field::calc_est_data[14] = { 1.0, 1.0, 1.0, 0.995, 0.88, 0.75, 0.19, 0.13, 0.09, 0.08, 0.0006, 0.0005, 0.0, 0.0 };
 
 // табличные значения
-double AI_estimates_field::calc_est( char n, bool player_is_me ) {
+long double AI_estimates_field::calc_est( char n, bool player_is_me ) {
     switch(n) {
     case 5:
         return ( player_is_me ?  calc_est_data[0]  :  calc_est_data[1] );
@@ -121,8 +121,8 @@ void AI_estimates_field::calculate() {
                     if( (Val)(*jj).player == nought )
                         t_1++;
                 };
-                double e_0 = calc_est( ( t_1>0 ? -1 : t_0 ), (moves_count&1)==0 );
-                double e_1 = calc_est( ( t_0>0 ? -1 : t_1 ), (moves_count&1)==1 );
+                long double e_0 = calc_est( ( t_1>0 ? -1 : t_0 ), (moves_count&1)==0 );
+                long double e_1 = calc_est( ( t_0>0 ? -1 : t_1 ), (moves_count&1)==1 );
                 for( jj=j,i=0; i<5; ++jj,++i ) {
                     if( (bool)(*jj) )
                         continue; // не будем ставить оценку в ту клетку, где уже есть ход

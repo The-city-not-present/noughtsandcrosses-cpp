@@ -19,9 +19,10 @@ class AI_position_prototype {
 
 /* 1. */int moves_count;
 /* 2. */double_pair estimate;
+        long double reliability;
 
-        double probability_global = {0};
-        virtual void update_probability_global( double ) = 0;
+        long double probability_global = {0};
+        virtual void update_probability_global( long double ) = 0;
         virtual const bool is_static() = 0;
         virtual const bool is_recursive() = 0;
         virtual const int id() = 0;
@@ -48,7 +49,7 @@ class AI_position_recursive : public AI_position_prototype
         const bool is_recursive() { return true; };
         const int id() { return position_id; };
 
-        void update_probability_global( double );
+        void update_probability_global( long double );
         void recalculate_estimates();
 
         static AI_position_directory position_directory;
@@ -74,7 +75,7 @@ class AI_position_static : public AI_position_prototype {
         const bool is_recursive() { return false; };
         const int id() { return 0; };
 
-        void update_probability_global( double );
+        void update_probability_global( long double );
 };
 
 #endif // AI_POSITION_H

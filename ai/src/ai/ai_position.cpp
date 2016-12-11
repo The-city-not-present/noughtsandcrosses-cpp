@@ -45,8 +45,8 @@ AI_position_recursive::AI_position_recursive( Field<Estimate_field_cell_type> *o
 void AI_position_recursive::collect_moves_and_calculate_estimates() {
     XY point;
     char me = estimates_field.moves_count&1;
-    double e_max  { 0 };
-    double e_max2 { 0 };
+    long double e_max  = 0;
+    long double e_max2 = 0;
     for( point.y = estimates_field.ctx.y_min; point.y<estimates_field.ctx.y_max+1; ++point.y )
         for( point.x = estimates_field.ctx.x_min; point.x<estimates_field.ctx.x_max+1; ++point.x )
             if( !(bool)estimates_field[point] ) {
@@ -62,12 +62,14 @@ void AI_position_recursive::collect_moves_and_calculate_estimates() {
                     estimates_field[point]
                 } );
             };
-    for( auto& i : moves )
-        i.position->estimate[1-me] = 0.8 * ( e_max-i.position->estimate[1-me]>e_max2 ? e_max-i.position->estimate[1-me] : e_max2 ) + 0.2 * (e_max-i.position->estimate[1-me]);
+    for( auto& i : moves ) {
+        i.position->reliability = ( i.position->estimate[me]>0.9999999 ? 1.0 : 1.0-(i.position->estimate[0]+i.position->estimate[1])/2.0 );
+        i.est_base[1-me] = i.position->estimate[1-me] = 0.6 * ( e_max-i.position->estimate[1-me]>e_max2 ? e_max-i.position->estimate[1-me] : e_max2 ) + 0.4 * (e_max-i.position->estimate[1-me]);
+    };
     recalculate_estimates();
 };
 
-void AI_position_recursive::update_probability_global( double val ) {
+void AI_position_recursive::update_probability_global( long double val ) {
     probability_global = 1-(1-probability_global)*(1-val);
     for( auto& i : moves )
         i.position->update_probability_global( val * i.probability );
@@ -77,7 +79,7 @@ void AI_position_recursive::recalculate_estimates() {
     char me = moves_count&1;
     vector<AI_move*> win_moves;
     for( auto& i : moves )
-        if( i.get_estimate()[me]>=0.99999999 )
+        if( i.position->estimate[me]>=0.99999999 )
             win_moves.push_back( &i );
     if( win_moves.size()>0 ) {
         for( auto &i : moves )
@@ -95,7 +97,7 @@ void AI_position_recursive::recalculate_estimates() {
         );
         return;
     };
-    double p_sum = 0.0;
+    long double p_sum = 0.0;
     double_pair e_sum;
     if( moves.size()==0 )
         throw runtime_error("no moves");
@@ -104,8 +106,8 @@ void AI_position_recursive::recalculate_estimates() {
             i.probability = 0;
             continue;
         };
-        double &a = i.get_estimate()[me];
-        double &b = i.get_estimate()[1-me];
+        long double a = i.get_estimate()[me];
+        long double b = i.get_estimate()[1-me];
         i.probability = 1.0/(1.0+std::exp((1.0/(1.0-b) - 1.0/(1.0-a))/0.7213475204444817));
     };
    sort(
@@ -120,8 +122,8 @@ void AI_position_recursive::recalculate_estimates() {
         }
     );
     {
-        double p = moves[0].probability*0.97;
-        double po = 1/((1-p)*(1-p)*(1-p));
+        long double p = moves[0].probability*0.97;
+        long double po = 1/((1-p)*(1-p)*(1-p));
         for( auto &i : moves )
             i.probability = pow( i.probability, po );
     };
@@ -136,9 +138,16 @@ void AI_position_recursive::recalculate_estimates() {
         estimate = e_sum;
         for( auto &i : moves )
             i.probability = i.probability / p_sum;
+        {
+            long double temp{1};
+            for( auto &i : moves )
+                temp *= pow(1.0-i.position->reliability,i.probability);
+            reliability = 1.0-temp*0.9;
+        };
     } else {
         estimate[me] = 0;
         estimate[1-me]   = 1;
+        reliability = 1; // нет ходов
     };
 };
 
@@ -152,7 +161,7 @@ AI_position_static::AI_position_static( int count, double_pair e ) {
     this->estimate = e;
 };
 
-void AI_position_static::update_probability_global( double val ) {
+void AI_position_static::update_probability_global( long double val ) {
     probability_global = val;
 };
 

@@ -21,9 +21,11 @@ class AI_move
         XY move;
         AI_position_recursive* parent_position;
         unique_ptr<AI_position_prototype> position;
-        double_pair& get_estimate();
+
+        const double_pair get_estimate();
         double_pair est_base;
-        double probability = {0};
+        long double probability_base = {0};
+        long double probability = {0};
 
     protected:
 
