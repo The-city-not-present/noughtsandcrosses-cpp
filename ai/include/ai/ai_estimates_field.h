@@ -41,6 +41,9 @@ class AI_estimates_field : public Field<Estimate_field_cell_type>
         AI_estimates_field& operator = ( AI_estimates_field& ) = delete;
         void calculate();
 
+        static double calc_est_data[14];
+        static double calc_est( char, bool );
+
     protected:
 
     private:

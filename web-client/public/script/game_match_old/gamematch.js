@@ -4,7 +4,7 @@
 	- закончена игра
 */
 
-setTimeout(function(){if(match.running!='running')return;ratings();if(ratings.result.length>0)$('#ratt').text(ratings.to_string());},8000)
+setInterval(function(){if(match.running!='running')return;ratings();if(ratings.result.length>0)$('#ratt').text(ratings.to_string());},8000)
 
 
 function match( participants, positions ) {

@@ -23,7 +23,7 @@
 		<div class="link-back">
 			<div>	&#x21b0; назад	</div>
 			<div>
-				<p>версия 0.0.1.3<!--<sup> <a title="история версий" href="/noughtsandcrosses/changelog.php">(?)</a></sup>--></p>
+				<p>версия 0.0.1.4<!--<sup> <a title="история версий" href="/noughtsandcrosses/changelog.php">(?)</a></sup>--></p>
 			</div>
 		</div>
 
@@ -236,12 +236,16 @@
  	human.ai_status = 'human';
  	human.title = 'human';
  	
-	function http_server_ai() {
+	function http_server_ai( opts ) {
  		window['data_http_server_move'] = true;
+ 		var request_obj = {};
+ 		request_obj.moves = game.moves;
+ 		request_obj.options = opts;
+ 		
 		$.ajax( {
 			url: "/noughtsandcrosses/code/",
 			type: "post",
-			data: JSON.stringify(game.moves)+"\0" ,
+			data: JSON.stringify(request_obj)+"\0" ,
 			success: function (response) {
 				var r = response;
 				if( r["comment"]!=undefined ) {

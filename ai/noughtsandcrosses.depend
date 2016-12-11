@@ -65,32 +65,37 @@
 1480353112 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/lines_field.hpp
 	<cstring>
 
-1481326044 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai.cpp
+1481408093 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai.cpp
 	"ai/ai.h"
+	"ai_estimates_field.h"
 	<cmath>
 	<map>
 	"logname.h"
 
-1481226305 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/ai/ai.h
+1481403253 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/ai/ai.h
 	"lines.h"
 	"ai/ai_position.h"
+	"ai/ai_options.h"
+	<map>
+	<string>
 
-1481225901 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_estimates_field.cpp
+1481407562 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_estimates_field.cpp
 	"ai_estimates_field.h"
 
-1480711837 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/ai/ai_estimates_field.h
+1481407421 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/ai/ai_estimates_field.h
 	"lines.h"
 
 1481023503 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/lines.cpp
 	"lines.h"
 	<vector>
 
-1481327821 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/main.cpp
+1481412715 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/main.cpp
 	<iostream>
 	<vector>
 	<cstdlib>
 	"lines.h"
 	"json_parse.h"
+	"json_nlohmann/json.hpp"
 	"ai/ai.h"
 	"read_post.h"
 	"logname.h"
@@ -124,7 +129,7 @@
 	"ai/ai_move.h"
 	"ai/ai.h"
 
-1481223512 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_position.cpp
+1481400312 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_position.cpp
 	"ai/ai_position.h"
 	<algorithm>
 	<cmath>
@@ -146,4 +151,41 @@
 
 1481323899 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/logname.h
 	<fstream>
+
+1481403081 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/ai/ai_options.h
+	<string.h>
+
+1481403571 source:/C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/src/ai/ai_options.cpp
+	"ai_options.h"
+	<map>
+	<string>
+	"ai/ai.h"
+
+1480665952 /C/cloud.mail.ru/work/cpp/noughtsandcrosses/ai/include/json_nlohmann/json.hpp
+	<algorithm>
+	<array>
+	<cassert>
+	<cctype>
+	<ciso646>
+	<cmath>
+	<cstddef>
+	<cstdint>
+	<cstdlib>
+	<cstring>
+	<functional>
+	<initializer_list>
+	<iomanip>
+	<iostream>
+	<iterator>
+	<limits>
+	<locale>
+	<map>
+	<memory>
+	<numeric>
+	<sstream>
+	<stdexcept>
+	<string>
+	<type_traits>
+	<utility>
+	<vector>
 

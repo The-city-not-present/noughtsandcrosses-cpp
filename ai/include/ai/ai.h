@@ -3,6 +3,9 @@
 
 #include "lines.h"
 #include "ai/ai_position.h"
+#include "ai/ai_options.h"
+#include <map>
+#include <string>
 
 
 class AI : public Lines
@@ -14,9 +17,11 @@ class AI : public Lines
         AI( move_list& m ) : Lines(m) {};
         XY find_move();
         unique_ptr<AI_position_recursive> start_position;
+        void options_update();
 
-        void evaluate();
+        bool evaluate();
 
+        static std::map<const char*,double> opts;
     protected:
         vector<AI_move*> collect_move_candidates( double limit=0.55 );
         void flush_position_probabilities();

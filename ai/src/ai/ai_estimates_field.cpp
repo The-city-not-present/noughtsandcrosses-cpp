@@ -2,25 +2,25 @@
 
 
 
+double AI_estimates_field::calc_est_data[14] = { 1.0, 1.0, 1.0, 0.995, 0.88, 0.75, 0.19, 0.13, 0.09, 0.08, 0.0006, 0.0005, 0.0, 0.0 };
 
 // табличные значения
-inline double calc_est( char n, bool player_is_me ) {
+double AI_estimates_field::calc_est( char n, bool player_is_me ) {
     switch(n) {
     case 5:
-        return 1.0;
+        return ( player_is_me ?  calc_est_data[0]  :  calc_est_data[1] );
     case 4:
-        return ( player_is_me ? 1.0  : 0.995 );
+        return ( player_is_me ?  calc_est_data[2]  :  calc_est_data[3] );
     case 3:
-        return ( player_is_me ? 0.88 : 0.75 );
+        return ( player_is_me ?  calc_est_data[4]  :  calc_est_data[5] );
     case 2:
-        return ( player_is_me ? 0.2  : 0.12 );
+        return ( player_is_me ?  calc_est_data[6]  :  calc_est_data[7] );
     case 1:
-        return ( player_is_me ? 0.09 : 0.07 );
+        return ( player_is_me ?  calc_est_data[8]  :  calc_est_data[9] );
     case 0:
-        return 0;
-        //return ( player_is_me ? 0.03503890488018235 : 0.0340636710751544 );
+        return ( player_is_me ? calc_est_data[10]  : calc_est_data[11] );
     default:
-        return 0.0;
+        return ( player_is_me ? calc_est_data[12]  : calc_est_data[13] );
     };
 };
 

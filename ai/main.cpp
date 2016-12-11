@@ -4,6 +4,7 @@
 
 #include "lines.h"
 #include "json_parse.h"
+#include "json_nlohmann/json.hpp"
 #include "ai/ai.h"
 #include "read_post.h"
 #include "logname.h"
@@ -14,6 +15,7 @@
 #include <string>
 
 using namespace std;
+using json = nlohmann::json;
 
 #include "comment.hpp"
 #include <cstdio>
@@ -45,19 +47,50 @@ int main( int argc, char** argv )
      {
        Finally_output output;
        try {
-            string movelist_str( "" );//[{\"x\":3,\"y\":5},{\"x\":3,\"y\":6},{\"x\":-1,\"y\":6},{\"x\":-1,\"y\":2},{\"x\":-1,\"y\":1},{\"x\":1,\"y\":7}]" );
+            string input( "" );
             if( argc>1 )
-                movelist_str = argv[1];
+                input = argv[1];
             else
-                movelist_str = cgi_processing::read_post();
+                input = cgi_processing::read_post();
             #ifdef DEBUG
-            movelist_str = "[{\"x\":28,\"y\":6},{\"x\":28,\"y\":7},{\"x\":29,\"y\":6},{\"x\":29,\"y\":7},{\"x\":30,\"y\":6},{\"x\":27,\"y\":6},{\"x\":30,\"y\":7},{\"x\":26,\"y\":5}]";
+            input = "{moves:[{\"x\":28,\"y\":6},{\"x\":28,\"y\":7},{\"x\":29,\"y\":6},{\"x\":29,\"y\":7},{\"x\":30,\"y\":6},{\"x\":27,\"y\":6},{\"x\":30,\"y\":7},{\"x\":26,\"y\":5}]}";
             #endif
-            log_harddrive << endl<<endl<<endl<<endl<<"timestamp: " << std::time(0) << endl << "program started with arguments:" << endl << movelist_str << endl << /*std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() ) << endl << */endl;
-            JSON_parse data(movelist_str);
-            move_list& moves = data.data;
-            // ветка А
+            log_harddrive << endl<<endl<<endl<<endl<<"timestamp: " << std::time(0) << endl << "program started with arguments:" << endl << input << endl << /*std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() ) << endl << */endl;
+            json j = json::parse( input );
+            move_list moves;
+            log_harddrive << "parsed moves array: ";
+            for( json::iterator i =j["moves"].begin(); i!=j["moves"].end(); ++i ) {
+                moves.push_back( XY{ (*i)["x"], (*i)["y"] } );
+            };
+            for( auto &i : moves )
+                log_harddrive << " ( "<<i.x<<", "<<i.y<<" ), ";
+            log_harddrive << endl;
             AI ai(moves);
+
+            if( j.find("options")!=j.end() ) {
+                if( j["options"].find("ai_evaluate_limit")!=j["options"].end() )
+                    ai.opts["ai_evaluate_limit"] = j["options"]["ai_evaluate_limit"];
+                if( j["options"].find("ai_evaluate_max_iteraions_count")!=j["options"].end() )
+                    ai.opts["ai_evaluate_max_iteraions_count"] = j["options"]["ai_evaluate_max_iteraions_count"];
+                if( j["options"].find("ai_estimates")!=j["options"].end() ) {
+                    ai.opts["ai_estimates_5_me"]    = j["options"]["ai_estimates"]["e5_me"];
+                    ai.opts["ai_estimates_5_notme"] = j["options"]["ai_estimates"]["e5_notme"];
+                    ai.opts["ai_estimates_4_me"]    = j["options"]["ai_estimates"]["e4_me"];
+                    ai.opts["ai_estimates_4_notme"] = j["options"]["ai_estimates"]["e4_notme"];
+                    ai.opts["ai_estimates_3_me"]    = j["options"]["ai_estimates"]["e3_me"];
+                    ai.opts["ai_estimates_3_notme"] = j["options"]["ai_estimates"]["e3_notme"];
+                    ai.opts["ai_estimates_2_me"]    = j["options"]["ai_estimates"]["e2_me"];
+                    ai.opts["ai_estimates_2_notme"] = j["options"]["ai_estimates"]["e2_notme"];
+                    ai.opts["ai_estimates_1_me"]    = j["options"]["ai_estimates"]["e1_me"];
+                    ai.opts["ai_estimates_1_notme"] = j["options"]["ai_estimates"]["e1_notme"];
+                    ai.opts["ai_estimates_0_me"]    = j["options"]["ai_estimates"]["e0_me"];
+                    ai.opts["ai_estimates_0_notme"] = j["options"]["ai_estimates"]["e0_notme"];
+                    ai.opts["ai_estimates_x_me"]    = j["options"]["ai_estimates"]["ex_me"];
+                    ai.opts["ai_estimates_x_notme"] = j["options"]["ai_estimates"]["ex_notme"];
+               };
+            };
+
+            log_harddrive << "find_move()" << endl;
             XY xy = ai.find_move();
             log_harddrive << endl<<"found best move [ "<<xy.x<<", "<<xy.y<<" ]" << endl<<endl;
             // debug
@@ -69,6 +102,7 @@ int main( int argc, char** argv )
             output << s.str();
 
         } catch ( exception &e ) {
+            log_harddrive << "ERROR: " << e.what() << endl;
             output << "{\"error\":\""+cgi_processing::url_encode(e.what())+"\"}";
             //cout << "exception:  " << e.what() << endl;
             return 0;//0xff;
