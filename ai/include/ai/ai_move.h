@@ -16,14 +16,14 @@ class AI_position_static;
 class AI_move
 {
     public:
-        AI_move( AI_position_recursive*, XY, double_pair );
+        AI_move( AI_position_recursive*, XY, double_pair, long double prob = 0, long double rel = 0 );
 
         XY move;
         AI_position_recursive* parent_position;
         unique_ptr<AI_position_prototype> position;
 
         const double_pair get_estimate();
-        double_pair est_base;
+        //double_pair est_base;
         long double probability_base = {0};
         long double probability = {0};
 

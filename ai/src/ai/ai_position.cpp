@@ -45,26 +45,36 @@ AI_position_recursive::AI_position_recursive( Field<Estimate_field_cell_type> *o
 void AI_position_recursive::collect_moves_and_calculate_estimates() {
     XY point;
     char me = estimates_field.moves_count&1;
-    long double e_max  = 0;
-    long double e_max2 = 0;
+    long double sum_p = 0;
+    long double sum_e_notme = 0;
+    long double sum_e_me    = 0;
     for( point.y = estimates_field.ctx.y_min; point.y<estimates_field.ctx.y_max+1; ++point.y )
         for( point.x = estimates_field.ctx.x_min; point.x<estimates_field.ctx.x_max+1; ++point.x )
             if( !(bool)estimates_field[point] ) {
-                if( estimates_field[point][1-me]>=e_max ) {
-                    e_max2 = e_max;
-                    e_max = estimates_field[point][1-me];
-                } else
-                    if( estimates_field[point][1-me]>e_max2 )
-                        e_max2 = estimates_field[point][1-me];
+                long double p = ((estimates_field[point][0]+estimates_field[point][1])*0.5);
+                p = p*p*p;
+                if( !(p>0) )
+                    continue;
+                long double r = 1.0 - (estimates_field[point][0]*estimates_field[point][0]+estimates_field[point][1]*estimates_field[point][1])*0.5;
                 moves.push_back( AI_move{
                     this,
                     point,
-                    estimates_field[point]
+                    estimates_field[point],
+                    p,
+                    r
                 } );
+                sum_e_me += p * estimates_field[point][me];
+                sum_e_notme += p * estimates_field[point][1-me];
+                sum_p += p;
+
             };
     for( auto& i : moves ) {
-        i.position->reliability = ( i.position->estimate[me]>0.9999999 ? 1.0 : 1.0-(i.position->estimate[0]+i.position->estimate[1])/2.0 );
-        i.est_base[1-me] = i.position->estimate[1-me] = 0.6 * ( e_max-i.position->estimate[1-me]>e_max2 ? e_max-i.position->estimate[1-me] : e_max2 ) + 0.4 * (e_max-i.position->estimate[1-me]);
+        const long double p_me    = sum_p - (sum_p+i.probability)*(25/(25+(sum_p-1)))+(sum_p+ 2*i.probability)*(1-25/(25+(sum_p-1)));
+        const long double p_notme = sum_p - (sum_p-i.probability)*(25/(25+(sum_p-1)))+(sum_p-12*i.probability)*(1-25/(25+(sum_p-1)));
+        i.position->estimate[me] =
+            0.15 * i.position->estimate[me] +
+            0.85 * ( sum_e_me + p_me * i.get_estimate()[me] ) / ( sum_p + p_me);
+        i.position->estimate[1-me] = ( sum_e_notme - p_notme * i.get_estimate()[1-me] ) / ( sum_p - p_notme);
     };
     recalculate_estimates();
 };
@@ -114,16 +124,17 @@ void AI_position_recursive::recalculate_estimates() {
         moves.begin(),
         moves.end(),
         [&me] ( AI_move& a, AI_move& b ) -> bool {
-            return (
+            return /*(
                 a.probability!=b.probability ?
-                (( a.probability - b.probability ) >= 0 ) :
+                */(( a.probability - b.probability ) >= 0 )/* :
                 (( a.est_base[me] - b.est_base[me] ) > 0 )
-            );
+            )*/;
         }
     );
     {
         long double p = moves[0].probability*0.97;
         long double po = 1/((1-p)*(1-p)*(1-p));
+        po *= 1.2;
         for( auto &i : moves )
             i.probability = pow( i.probability, po );
     };
