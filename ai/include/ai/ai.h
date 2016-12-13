@@ -21,7 +21,7 @@ class AI : public Lines
 
         bool evaluate();
 
-        static std::map<const char*,long double> opts;
+        static std::map<string,long double> opts;
     protected:
         vector<AI_move*> collect_move_candidates( long double limit=0.55 );
         void flush_position_probabilities();

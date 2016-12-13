@@ -40,7 +40,7 @@ vector<AI_move*> AI::collect_move_candidates( long double limit ) {
     for( auto position_depth=AI_position_recursive::position_directory.data.rbegin(); position_depth!=AI_position_recursive::position_directory.data.rend(); position_depth++ )
         for( auto &position : position_depth->second )
             for( auto& move : position->moves ) {
-                long double limit_virtual = 1.0 - (1.0-limit) * pow(move.probability * position->probability_global,0.001);
+                long double limit_virtual = 1.0 - (1.0-limit) * pow(move.probability * position->probability_global,0.0004);
                 if(
                     move.position->reliability<(1.0-limit_virtual) &&
                     move.position->is_static()

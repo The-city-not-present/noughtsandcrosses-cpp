@@ -53,7 +53,7 @@ int main( int argc, char** argv )
             else
                 input = cgi_processing::read_post();
             #ifdef DEBUG
-            input = "{moves:[{\"x\":28,\"y\":6},{\"x\":28,\"y\":7},{\"x\":29,\"y\":6},{\"x\":29,\"y\":7},{\"x\":30,\"y\":6},{\"x\":27,\"y\":6},{\"x\":30,\"y\":7},{\"x\":26,\"y\":5}]}";
+            input = "{\"moves\":[{\"x\":20,\"y\":15},{\"x\":16,\"y\":15},{\"x\":20,\"y\":12},{\"x\":20,\"y\":13},{\"x\":19,\"y\":14},{\"x\":18,\"y\":13},{\"x\":19,\"y\":13},{\"x\":19,\"y\":12},{\"x\":17,\"y\":14},{\"x\":18,\"y\":14},{\"x\":21,\"y\":14},{\"x\":18,\"y\":16},{\"x\":18,\"y\":17}]}";
             #endif
             log_harddrive << endl<<endl<<endl<<endl<<"timestamp: " << std::time(0) << endl << "program started with arguments:" << endl << input << endl << /*std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() ) << endl << */endl;
             json j = json::parse( input );
