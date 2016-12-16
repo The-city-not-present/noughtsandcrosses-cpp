@@ -12,7 +12,7 @@ XY AI::find_move() {
     if( field->moves_count==0 )
         return refmove;
     start_position = unique_ptr<AI_position_recursive>( new AI_position_recursive{&*field} );
-    for( int count=0; count<1; count++ )
+    for( int count=0; count<3; count++ )
         evaluate();
     return XY{ start_position->moves[0].move.x+refmove.x, start_position->moves[0].move.y+refmove.y };
 };
@@ -40,10 +40,10 @@ vector<AI_move*> AI::collect_move_candidates( long double limit ) {
     for( auto position_depth=AI_position_recursive::position_directory.data.rbegin(); position_depth!=AI_position_recursive::position_directory.data.rend(); position_depth++ )
         for( auto &position : position_depth->second )
             for( auto& move : position->moves ) {
-                long double limit_virtual = 1.0 - (1.0-limit) * pow(move.probability * position->probability_global,0.0004);
+                const long double limit_virtual = pow( limit * (-1/(log(move.probability*position->probability_global)/5.5-1)), 0.3 );
                 if(
-                    move.position->reliability<(1.0-limit_virtual) &&
-                    move.position->is_static()
+                    move.position->is_static() &&
+                    move.position->reliability<limit_virtual
                 )
                     whitelist.push_back( &move );
             };

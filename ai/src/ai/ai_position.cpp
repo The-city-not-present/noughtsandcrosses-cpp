@@ -4,6 +4,7 @@
 
 
 
+
 // == 1. AI_position_prototype ==
 
 // == 2. AI_position_recursive ==
@@ -48,16 +49,13 @@ void AI_position_recursive::collect_moves_and_calculate_estimates() {
     long double sum_p       = 0;
     long double sum_e_notme = 0;
     long double sum_e_me    = 0;
-    long double e_max = 0;
     for( point.y = estimates_field.ctx.y_min; point.y<estimates_field.ctx.y_max+1; ++point.y )
         for( point.x = estimates_field.ctx.x_min; point.x<estimates_field.ctx.x_max+1; ++point.x )
             if( !(bool)estimates_field[point] ) {
-                if( estimates_field[point][1-me]>e_max )
-                    e_max = estimates_field[point][1-me];
                 long double p = 1.0 - (1.0-estimates_field[point][0])*(1.0-estimates_field[point][1]);//((estimates_field[point][0]+estimates_field[point][1])*0.5);
                 if( !(p>0) )
                     continue;
-                long double r = 1.0 - (estimates_field[point][0]*estimates_field[point][0]+estimates_field[point][1]*estimates_field[point][1])*0.5;
+                long double r = ( p<0.9999999 ? 1.0 - p : 1.0 );
                 moves.push_back( AI_move{
                     this,
                     point,
@@ -70,28 +68,50 @@ void AI_position_recursive::collect_moves_and_calculate_estimates() {
                 sum_p += p;
 
             };
+    long double e_max    = 0;
+    long double e_max2   = 0;
+    long double e_max_me = 0;
+    for( auto& i : moves ) {
+        if( i.position->estimate[1-me]>=e_max ) {
+            e_max2 = e_max;
+            e_max = i.position->estimate[1-me];
+        } else
+            if( i.position->estimate[1-me]>e_max2 )
+                e_max2 = i.position->estimate[1-me];
+        if( i.position->estimate[me]>e_max_me )
+            e_max_me = i.position->estimate[me];
+    };
     for( auto& i : moves ) {
         if( i.probability<0 )
             throw runtime_error("probability < 0");
         if( sum_p<0 )
             throw runtime_error("probability < 0");
-        const long double k = i.probability / sum_p;
-        const long double p_me    = pow( k, 0.3 );
-        const long double p_notme    = pow( k, 0.19 );
+        const long double k = i.probability;// / sum_p;
+        const long double p_me       = i.get_estimate()[me];//pow( k, 0.3 );
+        const long double p_notme    = k;//pow( k, 0.19 );
         //const long double p_me    = sum_p+i.probability)*(25/(25+(sum_p-1)))+(sum_p+ 2*i.probability)*(1-25/(25+(sum_p-1));
         //const long double p_notme = sum_p-i.probability)*(25/(25+(sum_p-1)))+(sum_p-12*i.probability)*(1-25/(25+(sum_p-1));
         if( (p_me<0)||(sum_p-p_me<0) )
             throw runtime_error("p[me] < 0");
         if( (p_notme<0)||(sum_p-p_notme<0) )
             throw runtime_error("p[notme] < 0");
-        i.position->estimate[me] =
-            0.15 * i.position->estimate[me] +
-            0.85 * ( sum_e_me + p_me * i.get_estimate()[me] ) / ( sum_p + p_me);
-        i.position->estimate[1-me] =
-            0.35 * (e_max - i.get_estimate()[1-me] ) +
-            0.65 * ( sum_e_notme - p_notme * i.get_estimate()[1-me] ) / ( sum_p - p_notme);
+        if( (e_max<0) || (e_max2<0) )
+            throw runtime_error("e_max || e_max2 < 0");
+        if( (e_max>1)||(e_max2>1) )
+            throw runtime_error("e_max || e_max2 > 1");
+        {
+            const long double e = i.position->estimate[me];
+            i.position->estimate[me] = e * e + ( 1.0 - e ) * ( 0.4*e+0.6*e_max_me );
+        };
+        {
+            const long double e = i.position->estimate[1-me];
+            const long double e_m2 = 1.0-sqrt((1.0-e_max2)*(1.0-e_max+e));
+            i.position->estimate[1-me] = ( (e_max-e)>e_m2 ? e_max-e : e_m2 ); // среднее геом. обратных
+        };
         if( (i.get_estimate()[0]<0)||(i.get_estimate()[1]<0))
             throw runtime_error("e < 0");
+        if( (i.get_estimate()[0]>1)||(i.get_estimate()[1]>1))
+            throw runtime_error("e > 1");
     };
     recalculate_estimates();
 };
@@ -135,19 +155,23 @@ void AI_position_recursive::recalculate_estimates() {
         };
         long double a = i.get_estimate()[me];
         long double b = i.get_estimate()[1-me];
-        i.probability = 1.0/(1.0+std::exp((1.0/(1.0-b) - 1.0/(1.0-a))/0.7213475204444817));
+        i.probability = 1.0/(1.0+std::exp((1.0/sqrt(1.0-b) - 1.0/sqrt(1.0-a))/0.7213475204444817));
+        if( !( (i.probability>=0)&&(i.probability<=1) ) )
+            throw runtime_error("isNaN");
     };
-   sort(
+    sort(
         moves.begin(),
         moves.end(),
         [&me] ( AI_move& a, AI_move& b ) -> bool {
-            return /*(
-                a.probability!=b.probability ?
-                */(( a.probability - b.probability ) >= 0 )/* :
-                (( a.est_base[me] - b.est_base[me] ) > 0 )
-            )*/;
+            return ( a.probability - b.probability ) > 0;
         }
     );
+    if( moves[0].probability<0.0000001 ) {
+        estimate[me] = 0;
+        estimate[1-me]   = 1;
+        reliability = 1; // нет ходов
+        return;
+    };
     {
         long double p = moves[0].probability*0.97;
         long double po = 1/((1-p)*(1-p)*(1-p));
