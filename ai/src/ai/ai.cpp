@@ -2,8 +2,13 @@
 #include "ai_estimates_field.h"
 #include <cmath>
 #include <map>
+#include <functional>
+#include <chrono>
 
 #include "logname.h"
+
+using adjust_limit_fn = std::function<int (long double)>;
+long double adjust_limit_val( long double limit_base, adjust_limit_fn );
 
 XY AI::find_move() {
     options_update();
@@ -12,17 +17,21 @@ XY AI::find_move() {
     if( field->moves_count==0 )
         return refmove;
     start_position = unique_ptr<AI_position_recursive>( new AI_position_recursive{&*field} );
-    for( int count=0; count<3; count++ )
-        evaluate();
+    long double limit = opts["ai_evaluate_limit"];
+    auto start_time = std::chrono::steady_clock::now();
+    while( std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_time).count()<3500 ) {
+        limit = adjust_limit_val( limit, [&](long double p)->int{int n = collect_move_candidates(p).size();if(n>600)return 1;if(n==0)return -1;return 0;} );
+        evaluate( limit );
+    };
     return XY{ start_position->moves[0].move.x+refmove.x, start_position->moves[0].move.y+refmove.y };
 };
 
 
-bool AI::evaluate() {
+bool AI::evaluate( long double limit ) {
     log_harddrive << "   evaluate()" << endl;
     flush_position_probabilities();
     for( int depth = 0; depth<opts["ai_evaluate_max_iteraions_count"]; ++depth ) {
-        auto candidates = collect_move_candidates( opts["ai_evaluate_limit"] );
+        auto candidates = collect_move_candidates( limit );
             log_harddrive << "   collected " << candidates.size() << " to evaluate" << endl;
         if( candidates.size()==0 )
             break;
@@ -62,6 +71,22 @@ void AI::recalculate_estimates_recursive() {
         for( auto &i : position_depth->second )
             i->recalculate_estimates();
 };
+
+long double adjust_limit_val( long double limit_base, adjust_limit_fn criterion ) {
+    long double val = limit_base;
+    int result = criterion(val);
+    if( val>0.95 )
+        return val;
+    if( result==0 )
+        return val;
+    if( result>0 )
+        return adjust_limit_val( val*0.9, criterion );
+    if( result<0 )
+        return adjust_limit_val( 1.0-(1.0-val)*0.9, criterion );
+};
+
+
+
 
 void AI::options_update() {
     AI_estimates_field::calc_est_data[0]  = opts.at("ai_estimates_5_me");

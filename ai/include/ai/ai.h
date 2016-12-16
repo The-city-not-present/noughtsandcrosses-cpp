@@ -19,7 +19,7 @@ class AI : public Lines
         unique_ptr<AI_position_recursive> start_position;
         void options_update();
 
-        bool evaluate();
+        bool evaluate( long double );
 
         static std::map<string,long double> opts;
     protected:

@@ -68,45 +68,38 @@ void AI_position_recursive::collect_moves_and_calculate_estimates() {
                 sum_p += p;
 
             };
-    long double e_max    = 0;
-    long double e_max2   = 0;
+    AI_position_prototype* e_max_notme;
+    AI_position_prototype* e_max2_notme;
     long double e_max_me = 0;
+    if( moves.size()<2 )
+        throw runtime_error("unpredictable moves are too few");
+    e_max_notme = moves[0].position.get();
     for( auto& i : moves ) {
-        if( i.position->estimate[1-me]>=e_max ) {
-            e_max2 = e_max;
-            e_max = i.position->estimate[1-me];
-        } else
-            if( i.position->estimate[1-me]>e_max2 )
-                e_max2 = i.position->estimate[1-me];
+        if( i.position->estimate[1-me]>e_max_notme->estimate[1-me] )
+            e_max_notme = i.position.get();
         if( i.position->estimate[me]>e_max_me )
             e_max_me = i.position->estimate[me];
     };
+    if( moves[0].position.get()!=e_max_notme )
+        e_max2_notme = moves[0].position.get();
+    else
+        e_max2_notme = moves[1].position.get();
+    for( auto& i : moves )
+        if( ( i.position.get()!=e_max_notme) && ( i.position->estimate[1-me]>e_max2_notme->estimate[1-me] ) )
+            e_max2_notme = i.position.get();
+    const long double e_max_notme_val = e_max_notme->estimate[1-me];
+    const long double e_max2_notme_val = e_max2_notme->estimate[1-me];
     for( auto& i : moves ) {
         if( i.probability<0 )
             throw runtime_error("probability < 0");
         if( sum_p<0 )
             throw runtime_error("probability < 0");
-        const long double k = i.probability;// / sum_p;
-        const long double p_me       = i.get_estimate()[me];//pow( k, 0.3 );
-        const long double p_notme    = k;//pow( k, 0.19 );
-        //const long double p_me    = sum_p+i.probability)*(25/(25+(sum_p-1)))+(sum_p+ 2*i.probability)*(1-25/(25+(sum_p-1));
-        //const long double p_notme = sum_p-i.probability)*(25/(25+(sum_p-1)))+(sum_p-12*i.probability)*(1-25/(25+(sum_p-1));
-        if( (p_me<0)||(sum_p-p_me<0) )
-            throw runtime_error("p[me] < 0");
-        if( (p_notme<0)||(sum_p-p_notme<0) )
-            throw runtime_error("p[notme] < 0");
-        if( (e_max<0) || (e_max2<0) )
-            throw runtime_error("e_max || e_max2 < 0");
-        if( (e_max>1)||(e_max2>1) )
-            throw runtime_error("e_max || e_max2 > 1");
         {
             const long double e = i.position->estimate[me];
             i.position->estimate[me] = e * e + ( 1.0 - e ) * ( 0.4*e+0.6*e_max_me );
         };
         {
-            const long double e = i.position->estimate[1-me];
-            const long double e_m2 = 1.0-sqrt((1.0-e_max2)*(1.0-e_max+e));
-            i.position->estimate[1-me] = ( (e_max-e)>e_m2 ? e_max-e : e_m2 ); // среднее геом. обратных
+            i.position->estimate[1-me] = ( i.position.get()==e_max_notme ? e_max2_notme_val : e_max_notme_val );
         };
         if( (i.get_estimate()[0]<0)||(i.get_estimate()[1]<0))
             throw runtime_error("e < 0");
