@@ -9,7 +9,7 @@ class AI_position_prototype;
 class AI_position_recursive;
 class AI_position_static;
 
-// using raw pointers and unique_ptr to children in tree structure
+// using raw pointers and <s>unique_ptr</s>shared_ptr to children in tree structure
 // according to advice
 // http://stackoverflow.com/questions/6679482/smart-pointers-for-modelling-a-general-tree-structure-its-iterators
 
@@ -20,7 +20,7 @@ class AI_move
 
         XY move;
         AI_position_recursive* parent_position;
-        unique_ptr<AI_position_prototype> position;
+        shared_ptr<AI_position_prototype> position;
 
         const double_pair get_estimate();
         //double_pair est_base;

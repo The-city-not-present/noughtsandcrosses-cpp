@@ -16,7 +16,6 @@ AI_position_recursive::AI_position_recursive( Field<Field_cell_type> *o ) : esti
     estimates_field.calculate();
     this->moves_count = o->moves_count;
     collect_moves_and_calculate_estimates();
-    position_directory << this;
 }
 
 AI_position_recursive::AI_position_recursive( Field<Field_cell_type> *o, XY p ) : estimates_field(o,p) {
@@ -24,7 +23,6 @@ AI_position_recursive::AI_position_recursive( Field<Field_cell_type> *o, XY p ) 
     estimates_field.calculate();
     this->moves_count = o->moves_count+1;
     collect_moves_and_calculate_estimates();
-    position_directory << this;
 }
 
 AI_position_recursive::AI_position_recursive( Field<Estimate_field_cell_type> *o ) : estimates_field(o) {
@@ -32,7 +30,6 @@ AI_position_recursive::AI_position_recursive( Field<Estimate_field_cell_type> *o
     estimates_field.calculate();
     this->moves_count = o->moves_count;
     collect_moves_and_calculate_estimates();
-    position_directory << this;
 }
 
 AI_position_recursive::AI_position_recursive( Field<Estimate_field_cell_type> *o, XY p ) : estimates_field(o,p) {
@@ -40,7 +37,6 @@ AI_position_recursive::AI_position_recursive( Field<Estimate_field_cell_type> *o
     estimates_field.calculate();
     this->moves_count = o->moves_count+1;
     collect_moves_and_calculate_estimates();
-    position_directory << this;
 }
 
 void AI_position_recursive::collect_moves_and_calculate_estimates() {
@@ -99,7 +95,9 @@ void AI_position_recursive::collect_moves_and_calculate_estimates() {
             i.position->estimate[me] = e * e + ( 1.0 - e ) * ( 0.4*e+0.6*e_max_me );
         };
         {
-            i.position->estimate[1-me] = ( i.position.get()==e_max_notme ? e_max2_notme_val : e_max_notme_val );
+            i.position->estimate[1-me] =
+                /*0.95 * */( i.position.get()==e_max_notme ? e_max2_notme_val : e_max_notme_val );// +
+                //0.05 * (e_max_notme_val-i.position->estimate[1-me]);
         };
         if( (i.get_estimate()[0]<0)||(i.get_estimate()[1]<0))
             throw runtime_error("e < 0");

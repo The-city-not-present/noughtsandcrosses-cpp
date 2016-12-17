@@ -8,7 +8,7 @@ namespace comment {
 
     string comment_position_deployment( AI_position_recursive*const node, string prefix={}, int moves_to_show = {5} ) {
         string result;
-        string endl = "<br />";
+        string endl = "\\n";
         string result_append;
         result_append = prefix+"estimate: [ "+str5(node->estimate[0])+"  "+str5(node->estimate[1])+" ]  count= "+str5((int)node->moves.size());
         result += result_append + string((size_t)(90-result_append.size()),(char)' ')+"#"+str3(node->id()) + endl;

@@ -251,7 +251,7 @@
 				var r = response;
 				if( r["comment"]!=undefined ) {
 					//console.log(r.comment);
-					$('#comment_zone').val(r.comment.replace(/<br\s*\/?>/gi,"\n"));
+					$('#comment_zone').val(r.comment.replace(/\\n/gi,"\n"));
 				};
 				if( r["error"]!=undefined ) {
 					console.log('ошибка:  '+r.error);
@@ -269,39 +269,7 @@
 			}
 		});
 	};
- 	/*function http_server_ai() {
- 		window['data_http_server_move'] = true;
- 		http_server_ai.xhr = new XMLHttpRequest();
- 		http_server_ai.xhr.open( 'POST', '/noughtsandcrosses/code/', true );
- 		http_server_ai.xhr.setRequestHeader('Content-Type', 'text/plain');
- 		http_server_ai.xhr.setRequestHeader('Cache-Control', 'no-cache');
- 		http_server_ai.xhr.onreadystatechange = http_server_ai_move;
-		request = 'data='+JSON.stringify(game.moves);
- 		http_server_ai.xhr.send( request );
- 	}
- 	function http_server_ai_move() {
-		if( !this.readyState == 4 )
-			return;
-		if( http_server_ai.xhr.status != 200 ) {
-			game_log( 'error: status: '+http_server_ai.xhr.status + ', body: ' + http_server_ai.xhr.statusText );
-			$('#comment_zone').val(http_server_ai.xhr.statusText);
-			alert( 'error: status: '+http_server_ai.xhr.status + ', body: ' + http_server_ai.xhr.statusText );
-		} else {
-			if( http_server_ai.xhr.responseText.length>0 ) 
-				try {
-					var r = JSON.parse(http_server_ai.xhr.responseText);
-					if( r["comment"]!=undefined ) {
-						console.log(r.comment);
-						$('#comment_zone').val(r.comment.replace(/<br\s*\/?>/gi,"\n"));
-					};
-					game.move(JSON.parse(http_server_ai.xhr.responseText));
-					//alert( 'response: '+http_server_ai.xhr.responseText );
-				} catch(e) {
-					console.log('invalid server responce : error=`'+e.name+'`, responce=`'+http_server_ai.xhr.responseText+'`');
-				};
-		};
- 		window['data_http_server_move'] = false;
- 	}*/
+
  	http_server_ai.ai_status = 'server ai engine';
  	http_server_ai.title = 'HTTP server engine';
  	
