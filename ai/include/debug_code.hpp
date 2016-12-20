@@ -10,7 +10,14 @@
                 cout << (char)*j << " ";
             cout << endl << endl;
         };
-        //test_field();
+
+        cout << endl << "field_val end iterator:  " << field_val_end(&ai.start_position->estimates_field).get() << endl;
+        cout << endl << "field_val  it iterator:  " << field_val_begin(&ai.start_position->estimates_field).get() << endl;
+        cout << endl << "output points by val iterator:" << endl;
+        for( auto it=field_val_begin(&ai.start_position->estimates_field); it!=field_val_end(&ai.start_position->estimates_field); ++it )
+            cout << " ( "<<(((*it)==cross)?"x":"o")<<", "<<it.pivot.x<<", "<<it.pivot.y<<" )    ";
+        cout << endl << endl;
+
     } catch ( exception &e ) {
         cerr << "exception:  " << e.what() << endl;
         return 0xff;

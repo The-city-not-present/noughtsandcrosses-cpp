@@ -10,6 +10,7 @@
 // == 2. AI_position_recursive ==
 
 int AI_position_recursive::position_index = 0;
+double AI_position_recursive::probabilities_pow = 3.2;
 
 AI_position_recursive::AI_position_recursive( Field<Field_cell_type> *o ) : estimates_field(o) {
     position_id = position_index++;
@@ -148,7 +149,7 @@ void AI_position_recursive::recalculate_estimates() {
         long double b = i.get_estimate()[1-me];
         i.probability = 1.0/(1.0+std::exp((1.0/sqrt(1.0-b) - 1.0/sqrt(1.0-a))/0.7213475204444817));
         if( !( (i.probability>=0)&&(i.probability<=1) ) )
-            throw runtime_error("isNaN");
+            throw runtime_error("recalculate0: probabilities are not in range < -1, 1 >   ( p == "+std::to_string(i.probability)+" )");
     };
     sort(
         moves.begin(),
@@ -163,21 +164,44 @@ void AI_position_recursive::recalculate_estimates() {
         reliability = 1; // нет ходов
         return;
     };
+    for( auto &i : moves )
+        if( !( (i.probability>=0)&&(i.probability<=1) ) )
+            throw runtime_error("recalculate1: probabilities are not in range < -1, 1 >   ( p == "+std::to_string(i.probability)+" )");
+    if( probabilities_pow>0 )
     {
         long double p = moves[0].probability*0.97;
         long double po = 1/((1-p)*(1-p)*(1-p));
-        po *= 3.2;
+        po *= probabilities_pow;
         for( auto &i : moves )
             i.probability = pow( i.probability, po );
     };
+    for( auto &i : moves )
+        if( !( (i.probability>=0)&&(i.probability<=1000000) ) )
+            throw runtime_error("recalculate2: probabilities are not in range < -1, 1000000 >   ( p == "+std::to_string(i.probability)+" )");
+    int count = 0;
     for( auto &i : moves ) {
+        count++;
         p_sum += i.probability;
         e_sum[0] += i.get_estimate()[0] * i.probability;
         e_sum[1] += i.get_estimate()[1] * i.probability;
+        /*if( (probabilities_pow<=0)&&(count>24) )
+            break;*/
     };
     if( p_sum>0 ) {
         e_sum[0] = e_sum[0]/p_sum;
         e_sum[1] = e_sum[1]/p_sum;
+        /*if( probabilities_pow<=0 ) {
+            e_sum[0] =
+                moves[0].position->reliability *
+                    moves[0].get_estimate()[0] +
+                (1.0-moves[0].position->reliability) *
+                    e_sum[0];
+            e_sum[1] =
+                moves[0].position->reliability *
+                    moves[0].get_estimate()[1] +
+                (1.0-moves[0].position->reliability) *
+                    e_sum[1];
+        };*/
         estimate = e_sum;
         for( auto &i : moves )
             i.probability = i.probability / p_sum;

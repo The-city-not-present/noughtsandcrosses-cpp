@@ -6,6 +6,7 @@
 #include "json_parse.h"
 #include "json_nlohmann/json.hpp"
 #include "ai/ai.h"
+#include "field_value_iterator.h"
 #include "read_post.h"
 #include "logname.h"
 #include <chrono>
@@ -70,8 +71,8 @@ int main( int argc, char** argv )
             if( j.find("options")!=j.end() ) {
                 if( j["options"].find("ai_evaluate_limit")!=j["options"].end() )
                     ai.opts["ai_evaluate_limit"] = j["options"]["ai_evaluate_limit"];
-                if( j["options"].find("ai_evaluate_max_iteraions_count")!=j["options"].end() )
-                    ai.opts["ai_evaluate_max_iteraions_count"] = j["options"]["ai_evaluate_max_iteraions_count"];
+                if( j["options"].find("ai_probabilities_pow")!=j["options"].end() )
+                    ai.opts["ai_probabilities_pow"] = j["options"]["ai_probabilities_pow"];
                 if( j["options"].find("ai_estimates")!=j["options"].end() ) {
                     ai.opts["ai_estimates_5_me"]    = j["options"]["ai_estimates"]["e5_me"];
                     ai.opts["ai_estimates_5_notme"] = j["options"]["ai_estimates"]["e5_notme"];

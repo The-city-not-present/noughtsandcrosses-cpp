@@ -3,6 +3,7 @@
 
 #include <map>
 #include "ai/ai_position.h"
+#include "ai/ai_estimates_field.h"
 
 class AI_position_prototype;
 
@@ -10,10 +11,10 @@ class AI_position_directory
 {
     public:
         AI_position_directory();
-        shared_ptr<AI_position_prototype> search( Field<Field_cell_type>& );
-        shared_ptr<AI_position_prototype> search( Field<Estimate_field_cell_type>& );
-        shared_ptr<AI_position_prototype> search( Field<Field_cell_type>&, XY );
-        shared_ptr<AI_position_prototype> search( Field<Estimate_field_cell_type>&, XY );
+//        shared_ptr<AI_position_prototype> search( Field<Field_cell_type>& );
+//        shared_ptr<AI_position_prototype> search( Field<Estimate_field_cell_type>& );
+        shared_ptr<AI_position_prototype> search( AI_estimates_field*, XY );
+//        shared_ptr<AI_position_prototype> search( Field<Estimates_field_cell_type>&, XY );
         AI_position_directory& operator << ( shared_ptr<AI_position_prototype> );
         void purge( Field<Field_cell_type>* );
         void purge( Field<Estimate_field_cell_type>* );

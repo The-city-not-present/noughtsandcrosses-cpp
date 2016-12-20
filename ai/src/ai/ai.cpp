@@ -17,11 +17,12 @@ XY AI::find_move() {
     AI_position_recursive::position_directory << std::static_pointer_cast<AI_position_prototype>(start_position);
     long double limit = opts["ai_evaluate_limit"];
     auto start_time = std::chrono::steady_clock::now();
-    while( std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_time).count()<3500 ) {
+    const long double time_limit = opts["ai_evaluate_time"];
+    while( std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_time).count()<time_limit ) {
         log_harddrive << "adjusting limit..."<<std::endl;
         limit = adjust_limit_val( limit, [&](long double p)->int{int n = collect_move_candidates(p).size();if(n>120)return 1;if(n==0)return -1;return 0;}, 0 );
         log_harddrive << "limit == "<<limit<<std::endl;
-        evaluate( limit, [&start_time]()->bool{return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_time).count()<3500;} );
+        evaluate( limit, [&start_time,&time_limit]()->bool{return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_time).count()<time_limit;} );
     };
     return XY{ start_position->moves[0].move.x+refmove.x, start_position->moves[0].move.y+refmove.y };
 };
@@ -113,7 +114,7 @@ void AI::recalculate_estimates_recursive() {
 
 void AI::evaluate_node( AI_move &move_object ) {
     auto &position = move_object.position;
-    auto temp = AI_position_recursive::position_directory.search( move_object.parent_position->estimates_field, move_object.move );
+    auto temp = AI_position_recursive::position_directory.search( &move_object.parent_position->estimates_field, move_object.move );
     position.reset();
     position = (
         temp ?
@@ -145,21 +146,7 @@ long double adjust_limit_val( long double limit_base, adjust_limit_fn criterion,
 
 
 
-void AI::options_update() {
-    AI_estimates_field::calc_est_data[0]  = opts.at("ai_estimates_5_me");
-    AI_estimates_field::calc_est_data[1]  = opts.at("ai_estimates_5_notme");
-    AI_estimates_field::calc_est_data[2]  = opts.at("ai_estimates_4_me");
-    AI_estimates_field::calc_est_data[3]  = opts.at("ai_estimates_4_notme");
-    AI_estimates_field::calc_est_data[4]  = opts.at("ai_estimates_3_me");
-    AI_estimates_field::calc_est_data[5]  = opts.at("ai_estimates_3_notme");
-    AI_estimates_field::calc_est_data[6]  = opts.at("ai_estimates_2_me");
-    AI_estimates_field::calc_est_data[7]  = opts.at("ai_estimates_2_notme");
-    AI_estimates_field::calc_est_data[8]  = opts.at("ai_estimates_1_me");
-    AI_estimates_field::calc_est_data[9]  = opts.at("ai_estimates_1_notme");
-    AI_estimates_field::calc_est_data[10] = opts.at("ai_estimates_0_me");
-    AI_estimates_field::calc_est_data[11] = opts.at("ai_estimates_0_notme");
-    AI_estimates_field::calc_est_data[12] = opts.at("ai_estimates_x_me");
-    AI_estimates_field::calc_est_data[13] = opts.at("ai_estimates_x_notme");
-};
+//void AI::options_update() {
+// см. ai_options.cpp
 
 

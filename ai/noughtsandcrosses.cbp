@@ -85,6 +85,7 @@
 		<Unit filename="include/ai/ai_position_directory.h" />
 		<Unit filename="include/comment.hpp" />
 		<Unit filename="include/debug_code.hpp" />
+		<Unit filename="include/field_value_iterator.h" />
 		<Unit filename="include/json_nlohmann/json.hpp" />
 		<Unit filename="include/json_parse.h" />
 		<Unit filename="include/lines.h" />
@@ -98,6 +99,7 @@
 		<Unit filename="src/ai/ai_options.cpp" />
 		<Unit filename="src/ai/ai_position.cpp" />
 		<Unit filename="src/ai/ai_position_directory.cpp" />
+		<Unit filename="src/field_value_iterator.cpp" />
 		<Unit filename="src/json_parse.cpp" />
 		<Unit filename="src/lines.cpp" />
 		<Unit filename="src/logname.cpp" />

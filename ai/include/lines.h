@@ -287,10 +287,9 @@ public:
     // enabling to loop over all the directions
     unique_ptr<Field_line_iterator<type>> line_iterator_begin_by_dir(lines_direction);
     unique_ptr<Field_line_iterator<type>> line_iterator_end_by_dir(lines_direction);
-private:
+protected:
     unsigned int w; unsigned int h;
     unique_ptr<type[]> data;
-protected:
     void Create();
 };
 

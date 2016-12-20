@@ -54,6 +54,8 @@ class AI_position_recursive : public AI_position_prototype
 
         static AI_position_directory position_directory;
         static int position_index;
+
+        static double probabilities_pow;
     protected:
         int position_id;
         void collect_moves_and_calculate_estimates(); // called once in constructor

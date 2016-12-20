@@ -1,5 +1,6 @@
 #include "ai_position_directory.h"
 #include <algorithm>
+#include "field_value_iterator.h"
 
 AI_position_directory::AI_position_directory() {}
 
@@ -8,31 +9,37 @@ AI_position_directory& AI_position_directory::operator << ( shared_ptr<AI_positi
     return *this;
 };
 
-shared_ptr<AI_position_prototype> AI_position_directory::search( Field<Estimate_field_cell_type>& field ) {
+/*shared_ptr<AI_position_prototype> AI_position_directory::search( Field<Estimate_field_cell_type>& field ) {
     return shared_ptr<AI_position_prototype>(nullptr);
 };
 
 shared_ptr<AI_position_prototype> AI_position_directory::search( Field<Field_cell_type>& field ) {
     return shared_ptr<AI_position_prototype>(nullptr);
 };
+*/
 
-shared_ptr<AI_position_prototype> AI_position_directory::search( Field<Estimate_field_cell_type>& field, XY p ) {
-    return shared_ptr<AI_position_prototype>(nullptr);
-    auto &pos_vector = data[field.moves_count+1];
+
+shared_ptr<AI_position_prototype> AI_position_directory::search( AI_estimates_field* field, XY point ) {
+    auto &pos_vector = data[field->moves_count+1];
     for( auto &position : pos_vector ) {
         bool identical = true;
-        auto it1 = static_pointer_cast<AI_position_recursive>(position)->estimates_field.begin();
-        auto it2 = field.begin();
+        auto it1 = field_val_begin(&static_pointer_cast<AI_position_recursive>(position)->estimates_field);
+        auto it2 = field_val_begin(field);
         while(
-            (it1!=static_pointer_cast<AI_position_recursive>(position)->estimates_field.end())&&
-            ((Field_cell_type)(*it1)).is_undefined()
-        )
+            (it1!=field_val_end(&static_pointer_cast<AI_position_recursive>(position)->estimates_field))||
+            (it2!=field_val_end(field))
+        ) {
+            if( (it1.pivot!=it2.pivot)&&(it1.pivot==point)&&(*it1==((field->moves_count&1)==0?cross:nought)) ) {
+                ++it1;
+                continue;
+            };
+            if( (it1.pivot!=it2.pivot)||(*it1!=*it2) ) {
+                identical = false;
+                break;
+            };
             ++it1;
-        while(
-            (it2!=field.end())&&
-            ((Field_cell_type)(*it2)).is_undefined()
-        )
             ++it2;
+        };
         //while
         if( identical )
             return position;
@@ -40,9 +47,10 @@ shared_ptr<AI_position_prototype> AI_position_directory::search( Field<Estimate_
     return shared_ptr<AI_position_prototype>(nullptr);
 };
 
+/*
 shared_ptr<AI_position_prototype> AI_position_directory::search( Field<Field_cell_type>& field, XY p ) {
     return shared_ptr<AI_position_prototype>(nullptr);
-};
+};*/
 
 void AI_position_directory::purge( Field<Field_cell_type>* field ) {
     // TODO: реализовать
